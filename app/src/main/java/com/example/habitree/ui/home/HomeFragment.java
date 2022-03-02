@@ -7,12 +7,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.example.habitree.R;
+import com.example.habitree.model.HabitModel;
 import com.example.habitree.model.HomeModel;
 import com.example.habitree.presenter.HomePresenter;
 import com.example.habitree.view.AbstractView;
@@ -32,9 +30,18 @@ public class HomeFragment extends Fragment implements AbstractView<HomePresenter
         // call methods to set up presenter -
         homeModel = presenter.onViewCreated();
 
-        //update the view
+        // update the view
         // can set on click methods and stuff here
-        textView.setText(homeModel.habits.get(0).name);
+        HabitModel habit = homeModel.habits.get(0);
+        textView.setText(String.format("%s - %d/%d", habit.name, habit.current, habit.goal));
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // example modification that will get persisted to disk
+                presenter.markHabitAsComplete(habit);
+                textView.setText(String.format("%s - %d/%d", habit.name, habit.current, habit.goal));
+            }
+        });
 
         return root;
     }
