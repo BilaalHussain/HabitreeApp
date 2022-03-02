@@ -51,7 +51,7 @@ public class HomeFragment extends Fragment implements AbstractView<HomePresenter
 
         HabitAdapter habitAdapter = new HabitAdapter();
         habitAdapter.setEventListener(event -> {
-            // TODO HAVE THIS UPDATE AS YOU TAP IT -- will need to figure this out more
+            // TODO edit this event listener to instead navigate to the habit edit page
             List<HabitModel> newHabits = presenter.markHabitAsComplete(habit);
             habitAdapter.setCurrentHabits(newHabits);
         });
