@@ -1,5 +1,7 @@
 package com.example.habitree.presenter;
 
+import android.content.Context;
+
 import com.example.habitree.api.HabitApi;
 import com.example.habitree.model.HabitModel;
 import com.example.habitree.model.HomeModel;
@@ -24,8 +26,9 @@ public class HomePresenter implements AbstractPresenter {
         return new HomeModel(habits);
     }
 
-    public void markHabitAsComplete(HabitModel habit) {
+    public List<HabitModel> markHabitAsComplete(HabitModel habit) {
         habit.current += 1;
         HabitApi.updateHabit(view.getContext(), habit);
+        return HabitApi.getAllHabits(view.getContext());
     }
 }
