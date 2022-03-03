@@ -27,7 +27,6 @@ public class HomePresenter implements AbstractPresenter {
     }
 
     public List<HabitModel> markHabitAsComplete(HabitModel habit) {
-        habit.current += 1;
         HabitApi.updateHabit(view.getContext(), habit);
         return HabitApi.getAllHabits(view.getContext());
     }

@@ -8,6 +8,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,6 +19,7 @@ import com.example.habitree.listener.EventListener;
 import com.example.habitree.model.HabitModel;
 import com.example.habitree.model.HomeModel;
 import com.example.habitree.presenter.HomePresenter;
+import com.example.habitree.ui.editing.EditHabitFragment;
 import com.example.habitree.ui.HabitAdapter;
 import com.example.habitree.view.AbstractView;
 
@@ -46,11 +49,13 @@ public class HomeFragment extends Fragment implements AbstractView<HomePresenter
         // update the view
         // can set on click methods and stuff here
         HabitModel habit = homeModel.habits.get(0);
+
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
         habitList.setLayoutManager(linearLayoutManager);
 
         HabitAdapter habitAdapter = new HabitAdapter();
         habitAdapter.setEventListener(event -> {
+            replaceFragment(EditHabitFragment.newInstance(habit));
             // TODO edit this event listener to instead navigate to the habit edit page
             List<HabitModel> newHabits = presenter.markHabitAsComplete(habit);
             habitAdapter.setCurrentHabits(newHabits);
@@ -71,5 +76,12 @@ public class HomeFragment extends Fragment implements AbstractView<HomePresenter
     @Override
     public void setPresenter(HomePresenter presenter) {
         this.presenter = presenter;
+    }
+
+    private void replaceFragment(Fragment f) {
+        FragmentManager fm = getParentFragmentManager();
+        FragmentTransaction t = fm.beginTransaction().replace(R.id.nav_host_fragment,f);
+        t.addToBackStack(null);
+        t.commit();
     }
 }
