@@ -15,16 +15,15 @@ import com.example.habitree.model.HabitModel;
 
 import java.util.List;
 
-import static java.util.Collections.emptyList;
+public class HabitAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-public class HabitAdapter extends RecyclerView.Adapter {
     private EventListener eventListener;
 
     public void setEventListener(EventListener eventListener) {
         this.eventListener = eventListener;
     }
 
-    List<HabitModel> currentHabits = emptyList();
+    List<HabitModel> currentHabits;
 
     public void setCurrentHabits(List<HabitModel> newHabits) {
         currentHabits = newHabits;
@@ -33,7 +32,7 @@ public class HabitAdapter extends RecyclerView.Adapter {
 
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public HabitViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.habit_layout, parent, false);
         return new HabitViewHolder(view, eventListener);

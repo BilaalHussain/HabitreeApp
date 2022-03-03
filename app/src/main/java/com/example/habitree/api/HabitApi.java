@@ -35,7 +35,10 @@ public class HabitApi {
             } catch (IOException e) {
                 // temporarily mock the set of saved habits if none exist
                 e.printStackTrace();
-                habits.add(new HabitModel(testId, "workout", 0, 10));
+                habits.add(new HabitModel(testId, "workout1", 0, 10));
+                habits.add(new HabitModel(testId, "workout2", 0, 10));
+                habits.add(new HabitModel(testId, "workout3", 0, 10));
+                habits.add(new HabitModel(testId, "workout4", 0, 10));
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
