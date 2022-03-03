@@ -1,5 +1,6 @@
 package com.example.habitree.ui.home;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -16,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.habitree.R;
 import com.example.habitree.listener.Event;
 import com.example.habitree.listener.EventListener;
+import com.example.habitree.listener.HabitTapped;
 import com.example.habitree.model.HabitModel;
 import com.example.habitree.model.HomeModel;
 import com.example.habitree.presenter.HomePresenter;
@@ -26,12 +29,15 @@ import com.example.habitree.view.AbstractView;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.IntStream;
 
 public class HomeFragment extends Fragment implements AbstractView<HomePresenter> {
 
     private HomeModel homeModel;
     private HomePresenter presenter;
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_home, container, false);
@@ -50,19 +56,24 @@ public class HomeFragment extends Fragment implements AbstractView<HomePresenter
         // can set on click methods and stuff here
         HabitModel habit = homeModel.habits.get(0);
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
-        habitList.setLayoutManager(linearLayoutManager);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
 
         HabitAdapter habitAdapter = new HabitAdapter();
         habitAdapter.setEventListener(event -> {
-            replaceFragment(EditHabitFragment.newInstance(habit));
+//            UUID habitId = ((HabitTapped) event).id;
+//            Integer index = IntStream.range(0, homeModel.habits.size())
+//                    .filter(x -> habitId.equals(homeModel.habits.get(x).id))
+//                    .findFirst();
+//            replaceFragment(EditHabitFragment.newInstance(homeModel.habits.));
+            replaceFragment(EditHabitFragment.newInstance(homeModel.habits.get(0)));
             // TODO edit this event listener to instead navigate to the habit edit page
-            List<HabitModel> newHabits = presenter.markHabitAsComplete(habit);
-            habitAdapter.setCurrentHabits(newHabits);
+//            List<HabitModel> newHabits = presenter.markHabitAsComplete(habit);
+//            habitAdapter.setCurrentHabits(newHabits);
         });
-        habitAdapter.setCurrentHabits(Arrays.asList(habit));
-
         habitList.setAdapter(habitAdapter);
+        habitList.setLayoutManager(linearLayoutManager);
+
+        habitAdapter.setCurrentHabits(homeModel.habits);
 
         return root;
     }
