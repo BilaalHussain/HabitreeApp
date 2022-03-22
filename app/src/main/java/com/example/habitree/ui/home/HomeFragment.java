@@ -16,19 +16,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.habitree.R;
-import com.example.habitree.listener.Event;
-import com.example.habitree.listener.EventListener;
 import com.example.habitree.listener.HabitTapped;
 import com.example.habitree.model.HabitModel;
 import com.example.habitree.model.HomeModel;
 import com.example.habitree.presenter.HomePresenter;
-import com.example.habitree.ui.editing.EditHabitFragment;
 import com.example.habitree.ui.HabitAdapter;
+import com.example.habitree.ui.editing.EditHabitFragment;
 import com.example.habitree.view.AbstractView;
 
-import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.List;
+import java.util.OptionalInt;
 import java.util.UUID;
 import java.util.stream.IntStream;
 
@@ -60,12 +56,13 @@ public class HomeFragment extends Fragment implements AbstractView<HomePresenter
 
         HabitAdapter habitAdapter = new HabitAdapter();
         habitAdapter.setEventListener(event -> {
-//            UUID habitId = ((HabitTapped) event).id;
-//            Integer index = IntStream.range(0, homeModel.habits.size())
-//                    .filter(x -> habitId.equals(homeModel.habits.get(x).id))
-//                    .findFirst();
-//            replaceFragment(EditHabitFragment.newInstance(homeModel.habits.));
-            replaceFragment(EditHabitFragment.newInstance(homeModel.habits.get(0)));
+            UUID habitId = ((HabitTapped) event).id;
+            OptionalInt index = IntStream.range(0, homeModel.habits.size())
+                    .filter(x -> habitId.equals(homeModel.habits.get(x).id))
+                    .findFirst();
+            if (index.isPresent()) {
+                replaceFragment(EditHabitFragment.newInstance(homeModel.habits.get(index.getAsInt())));
+            }
             // TODO edit this event listener to instead navigate to the habit edit page
 //            List<HabitModel> newHabits = presenter.markHabitAsComplete(habit);
 //            habitAdapter.setCurrentHabits(newHabits);
