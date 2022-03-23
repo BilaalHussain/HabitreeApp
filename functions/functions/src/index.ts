@@ -2,6 +2,7 @@
 
 import * as functions from "firebase-functions";
 import * as puppeteer from "puppeteer";
+import { ParsedQs } from "qs";
 
 const runtimeOpts = {
   timeoutSeconds: 120,
@@ -11,7 +12,7 @@ const runtimeOpts = {
 export const tree = functions.runWith(runtimeOpts).https.onRequest(
     async (request, response) => {
       try {
-        const imageBuffer: Buffer = await generateScreenShot();
+        const imageBuffer: Buffer = await generateScreenShot(request.query);
         response.writeHead(200, {"Content-Type": "image/png"});
         response.write(imageBuffer.toString("binary"), "binary");
         response.end();
@@ -24,12 +25,12 @@ export const tree = functions.runWith(runtimeOpts).https.onRequest(
  *
  * @return {Buffer} Buffer with image
 */
-function generateScreenShot(): Promise<Buffer> {
+function generateScreenShot(query: ParsedQs): Promise<Buffer> {
   return new Promise<Buffer>(async (resolve, reject) => {
     try {
       const browser = await puppeteer.launch({args: ["--no-sandbox"]});
       const page = await browser.newPage();
-      await page.goto("https://cs446-habitree.web.app/", {
+      await page.goto(`https://cs446-habitree.web.app/?red=${query.red}&green=${query.green}&blue=${query.blue}&orange=${query.orange}&purple=${query.purple}&seed=${query.seed}`, {
         waitUntil: "networkidle2",
       });
       await page.waitFor(500);

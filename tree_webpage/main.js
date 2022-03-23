@@ -1,3 +1,53 @@
+// Based of the work from: https://github.com/someuser-321/TreeGenerator
+
+// URL params - red, green, blue, orange, purple, seed
+const urlParams = new URLSearchParams(window.location.search)
+
+options = [
+	{
+		weight: Number(urlParams.get('red')),
+		item: [166, 66, 83]
+	},
+	{
+		weight: Number(urlParams.get('green')),
+		item: [77, 161, 103]
+	},
+	{
+		weight: Number(urlParams.get('blue')),
+		item: [72, 184, 208]
+	},
+	{
+		weight: Number(urlParams.get('orange')),
+		item: [252, 163, 17]
+	},
+	{
+		weight: Number(urlParams.get('purple')),
+		item: [92, 65, 93]
+	}
+]
+
+const LEVEL = Math.round(options.reduce((prev, next) => prev + next.weight, 0) / options.length * 10)
+
+const SEED = urlParams.get('seed')
+
+// Based on https://stackoverflow.com/a/55671924
+function get_next_leaf_color() {
+	var i;
+
+	var weights = [];
+
+	for (i = 0; i < options.length; i++)
+		weights[i] = options[i].weight + (weights[i - 1] || 0);
+	
+	var random = Math.random() * weights[weights.length - 1];
+
+	for (i = 0; i < weights.length; i++)
+		if (weights[i] > random)
+			break;
+	
+	return options[i].item;
+}
+
 var slider_size,
 	slider_level,
 	slider_rot,
@@ -38,7 +88,7 @@ var hide = false,
 	prog = 1,
 	growing = false,
 	mutating = false,
-	randSeed = 80,
+	randSeed = SEED,
 	paramSeed = Math.floor(Math.random()*1000),
 	randBias = 0;
 
@@ -47,9 +97,9 @@ function setup()
 {	
 	createCanvas(window.innerWidth, window.innerHeight);
 	
-	slider_size = createSlider(100, 200, /mobile/i.test(window.navigator.userAgent) ? 100 : 150, 1);
+	slider_size = createSlider(100, 200, 100, 1);
 	slider_size.position(10, 10);
-	slider_level = createSlider(1, 13, 11, 1);
+	slider_level = createSlider(1, 13, LEVEL + 3, 1);
 	slider_level.position(10, 30);
 	slider_rot = createSlider(0, PI/2, (PI/2) / 4, (PI/2) / (3 * 5 * 8));
 	slider_rot.position(10, 50);
@@ -263,6 +313,7 @@ function readInputs(updateTree)
 	rotRand = slider_rotRand.value();
 	leafProb = slider_leafProb.value();
 
+	// Hide the UI panel
 	hideUI()
 	
 	if ( updateTree && !growing )
@@ -374,8 +425,11 @@ function branch(level, seed)
 		
 		var flowerSize = (size / 100) * p * (1 / 6) * (len / level);
 
-		strokeWeight(1);
-		stroke(255 * rand2(), 255 * rand2(), 255  * rand2());
+		strokeWeight(LEVEL);
+
+		// Leaf color
+		leaf_color = get_next_leaf_color();
+		stroke(leaf_color[0] * rand5(), leaf_color[1] * rand5(), leaf_color[2] * rand5());
 		
 		rotate(-PI);
 		for ( var i=0 ; i<=8 ; i++ )
@@ -411,6 +465,9 @@ function grow()
 	setTimeout(grow, Math.max(1, 20 - diff));
 }
 
+function rand5() {
+	return random(1000) / 4000 + 0.75;
+}
 
 function rand()
 {
