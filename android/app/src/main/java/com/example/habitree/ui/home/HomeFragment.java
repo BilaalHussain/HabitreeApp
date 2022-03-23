@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.habitree.R;
 import com.example.habitree.listener.HabitTapped;
-import com.example.habitree.model.BinaryTarget;
+import com.example.habitree.model.DailyHabit;
 import com.example.habitree.model.HabitModel;
 import com.example.habitree.model.HomeModel;
 import com.example.habitree.presenter.HomePresenter;
@@ -71,11 +71,10 @@ public class HomeFragment extends Fragment implements AbstractView<HomePresenter
 
         addHabitButton.setOnClickListener(event -> {
             // creates basic habit model
-            HabitModel newHabit = new HabitModel(
+            HabitModel newHabit = new DailyHabit(
                     UUID.fromString("2f8bd149-1925-4b75-a675-f50b6a268d23"),
                     "",
                     HabitModel.Category.ACADEMIC,
-                    new BinaryTarget(),
                     new ArrayList<>()
             );
             homeModel.habits.add(newHabit);
