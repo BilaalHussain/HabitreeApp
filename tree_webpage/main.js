@@ -44,7 +44,10 @@ function get_next_leaf_color() {
 	for (i = 0; i < weights.length; i++)
 		if (weights[i] > random)
 			break;
-	
+
+	if (i == options.length) {
+		return [0, 0, 0]
+	}
 	return options[i].item;
 }
 
