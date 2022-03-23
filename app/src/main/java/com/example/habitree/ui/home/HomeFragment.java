@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -39,18 +40,16 @@ public class HomeFragment extends Fragment implements AbstractView<HomePresenter
         View root = inflater.inflate(R.layout.fragment_home, container, false);
 //        final TextView textView = root.findViewById(R.id.text_home);
         final TextView title = root.findViewById(R.id.todays_habit_title);
+        final Button addHabitButton = root.findViewById(R.id.add_habit_button);
         final RecyclerView habitList = root.findViewById(R.id.habit_list);
 
         title.setText(R.string.todays_habits);
 
         setPresenter(new HomePresenter(this));
 
-        // call methods to set up presenter -
+        // Note this issue is that this is getting called when we return to the fragment
+        //      and for some reason only the habit that was just updated is present
         homeModel = presenter.onViewCreated();
-
-        // update the view
-        // can set on click methods and stuff here
-        HabitModel habit = homeModel.habits.get(0);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
 
@@ -67,6 +66,19 @@ public class HomeFragment extends Fragment implements AbstractView<HomePresenter
 //            List<HabitModel> newHabits = presenter.markHabitAsComplete(habit);
 //            habitAdapter.setCurrentHabits(newHabits);
         });
+
+        addHabitButton.setOnClickListener(event -> {
+            // creates basic habit model
+            HabitModel newHabit = new HabitModel(
+                    UUID.fromString("2f8bd149-1925-4b75-a675-f50b6a268d23"),
+                    "",
+                    0,
+                    0
+            );
+            homeModel.habits.add(newHabit);
+            replaceFragment(EditHabitFragment.newInstance(newHabit));
+        });
+
         habitList.setAdapter(habitAdapter);
         habitList.setLayoutManager(linearLayoutManager);
 
