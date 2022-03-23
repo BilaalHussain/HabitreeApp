@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.habitree.R;
 import com.example.habitree.listener.HabitTapped;
+import com.example.habitree.model.BinaryTarget;
 import com.example.habitree.model.HabitModel;
 import com.example.habitree.model.HomeModel;
 import com.example.habitree.presenter.HomePresenter;
@@ -25,6 +26,7 @@ import com.example.habitree.ui.HabitAdapter;
 import com.example.habitree.ui.editing.EditHabitFragment;
 import com.example.habitree.view.AbstractView;
 
+import java.util.ArrayList;
 import java.util.OptionalInt;
 import java.util.UUID;
 import java.util.stream.IntStream;
@@ -72,8 +74,9 @@ public class HomeFragment extends Fragment implements AbstractView<HomePresenter
             HabitModel newHabit = new HabitModel(
                     UUID.fromString("2f8bd149-1925-4b75-a675-f50b6a268d23"),
                     "",
-                    0,
-                    0
+                    HabitModel.Category.ACADEMIC,
+                    new BinaryTarget(),
+                    new ArrayList<>()
             );
             homeModel.habits.add(newHabit);
             replaceFragment(EditHabitFragment.newInstance(newHabit));
