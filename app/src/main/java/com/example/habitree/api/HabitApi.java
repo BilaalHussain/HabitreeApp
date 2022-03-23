@@ -20,8 +20,12 @@ public class HabitApi {
 
     private static List<HabitModel> loadHabitsFromDisk(Context context) {
         // Todo: Pull all real habit ids from a file instead of mocking here
-        UUID testId = UUID.fromString("2f8bd149-1925-4b75-a675-f50b6a268d23");
-        List<UUID> habitIds = Arrays.asList(testId);
+        UUID testId1 = UUID.fromString("2f8bd149-1925-4b75-a675-f50b6a268d23");
+        UUID testId2 = UUID.fromString("2f8bd149-1925-4b75-a675-f50b6a268d24");
+        UUID testId3 = UUID.fromString("2f8bd149-1925-4b75-a675-f50b6a268d25");
+        UUID testId4 = UUID.fromString("2f8bd149-1925-4b75-a675-f50b6a268d26");
+        UUID testId5 = UUID.fromString("2f8bd149-1925-4b75-a675-f50b6a268d28");
+        List<UUID> habitIds = Arrays.asList(testId1);
         List<HabitModel> habits = new ArrayList<>();
 
         for (UUID habitId : habitIds) {
@@ -35,10 +39,10 @@ public class HabitApi {
             } catch (IOException e) {
                 // temporarily mock the set of saved habits if none exist
                 e.printStackTrace();
-                habits.add(new HabitModel(testId, "workout1", 0, 10));
-                habits.add(new HabitModel(testId, "workout2", 0, 10));
-                habits.add(new HabitModel(testId, "workout3", 0, 10));
-                habits.add(new HabitModel(testId, "workout4", 0, 10));
+                habits.add(new HabitModel(testId1, "Drinking Water", 3, 8));
+                habits.add(new HabitModel(testId2, "Exercising", 1, 4));
+                habits.add(new HabitModel(testId4, "Crying", 15, 100));
+                habits.add(new HabitModel(testId5, "Laying on the bed", 12, 30));
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }

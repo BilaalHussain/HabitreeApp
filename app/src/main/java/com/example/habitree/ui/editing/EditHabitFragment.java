@@ -8,8 +8,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,23 +49,39 @@ public class EditHabitFragment extends Fragment {
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_edit_habit, container, false);
         final TextView habitName = root.findViewById(R.id.habit_name);
-        final EditText habitCurrent = root.findViewById(R.id.habit_current);
-        final EditText habitGoal = root.findViewById(R.id.habit_goal);
+        final Spinner categorySpinner = root.findViewById(R.id.category_spinner);
+        final Spinner frequencySpinner = root.findViewById(R.id.frequency_spinner);
+        final EditText targetInput = root.findViewById(R.id.target_input);
 
 
         habitName.setText(String.format("%s", h.name));
-        habitCurrent.setText(String.format("%s", h.current));
-        habitGoal.setText(String.format("%s", h.goal));
+        targetInput.setText(String.format("%s", h.goal));
 
+        ArrayAdapter<CharSequence> categoryAdapter = ArrayAdapter.createFromResource(
+                getContext(),
+                R.array.categories_array,
+                android.R.layout.simple_spinner_item
+        );
+        ArrayAdapter<CharSequence> frequencyAdapter = ArrayAdapter.createFromResource(
+                getContext(),
+                R.array.frequencies_array,
+                android.R.layout.simple_spinner_item
+        );
 
-        Button button_save = (Button) root.findViewById(R.id.button_save);
+        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        frequencyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        categorySpinner.setAdapter(categoryAdapter);
+        frequencySpinner.setAdapter(frequencyAdapter);
+
+        Button button_save = (Button) root.findViewById(R.id.save_habit_button);
         button_save.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 try {
                     onSave(h,
                             habitName.getText().toString(),
-                            Integer.parseInt(habitCurrent.getText().toString()),
-                            Integer.parseInt(habitGoal.getText().toString()));
+                            0,
+                            Integer.parseInt(targetInput.getText().toString()));
                     getParentFragmentManager().popBackStack();
                 }
                 catch (NumberFormatException e) {
@@ -73,28 +92,25 @@ public class EditHabitFragment extends Fragment {
             }
         });
 
-        Button button_complete = (Button) root.findViewById(R.id.button_complete);
-        button_complete.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                try {
-                    onComplete(h,
-                            habitName.getText().toString(),
-                            Integer.parseInt(habitGoal.getText().toString()));
-                    getParentFragmentManager().popBackStack();
-            }
-                catch (NumberFormatException e) {
-                Log.e("EDIT", "onComplete int parse fail" + e.getMessage());
-                    Toast.makeText(getContext(), "Fail", Toast.LENGTH_SHORT).show();
-            }
-            }
-        });
+//        Button button_complete = (Button) root.findViewById(R.id.button_complete);
+//        button_complete.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View v) {
+//                try {
+//                    onSave(h,
+//                            habitName.getText().toString(),
+//                            0,
+//                            Integer.parseInt(targetInput.getText().toString()));
+//                    getParentFragmentManager().popBackStack();
+//            }
+//                catch (NumberFormatException e) {
+//                Log.e("EDIT", "onComplete int parse fail" + e.getMessage());
+//                    Toast.makeText(getContext(), "Fail", Toast.LENGTH_SHORT).show();
+//            }
+//            }
+//        });
 
-        Button button_remove = (Button) root.findViewById(R.id.button_remove);
-        button_remove.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                onRemove(h);
-            }
-        });
+        Button button_remove = (Button) root.findViewById(R.id.delete_habit_button);
+        button_remove.setOnClickListener(v -> onRemove(h));
         return root;
     }
 
