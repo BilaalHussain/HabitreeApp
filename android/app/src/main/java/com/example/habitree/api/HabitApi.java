@@ -1,9 +1,8 @@
 package com.example.habitree.api;
 
 import android.content.Context;
-import android.util.Log;
 
-import com.example.habitree.model.BinaryTarget;
+import com.example.habitree.model.DailyHabit;
 import com.example.habitree.model.HabitModel;
 
 import java.io.FileInputStream;
@@ -40,11 +39,10 @@ public class HabitApi {
             } catch (IOException e) {
                 // temporarily mock the set of saved habits if none exist
                 e.printStackTrace();
-                habits.add(new HabitModel(
+                habits.add(new DailyHabit(
                         testId1,
                         "Drinking Water",
                         HabitModel.Category.ACADEMIC,
-                        new BinaryTarget(),
                         new ArrayList<>()
                 ));
 //                habits.add(new HabitModel(testId2, "Exercising", 1, 4));
@@ -65,8 +63,6 @@ public class HabitApi {
             os.writeObject(habit);
             os.close();
             fos.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -1,5 +1,6 @@
 package com.example.habitree.ui.editing;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -18,12 +19,10 @@ import android.widget.Toast;
 
 import com.example.habitree.R;
 import com.example.habitree.api.HabitApi;
-import com.example.habitree.model.BinaryTarget;
+import com.example.habitree.model.DailyHabit;
 import com.example.habitree.model.HabitModel;
-import com.example.habitree.model.IntegerTarget;
-import com.example.habitree.model.Target;
+import com.example.habitree.model.WeeklyHabit;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -51,6 +50,7 @@ public class EditHabitFragment extends Fragment {
 
     }
 
+    @SuppressLint("NewApi")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -64,10 +64,10 @@ public class EditHabitFragment extends Fragment {
         final TextView repeatsText = root.findViewById(R.id.repeats_label);
 
         habitName.setText(String.format("%s", h.name));
-        if (h.target instanceof IntegerTarget) {
+        if (h instanceof WeeklyHabit) {
             repeatsInput.setVisibility(View.VISIBLE);
             repeatsText.setVisibility(View.VISIBLE);
-            repeatsInput.setText(((IntegerTarget) h.target).targetValue);
+            repeatsInput.setText(((WeeklyHabit) h).target);
         }
 
         // set the category spinner to contain a list of alll the current categories
@@ -125,25 +125,22 @@ public class EditHabitFragment extends Fragment {
         Button button_save = (Button) root.findViewById(R.id.save_habit_button);
         button_save.setOnClickListener(v -> {
             try {
-                // TODO
-                Target newTarget;
                 // it is binary
-                if (targetTypeSpinner.getSelectedItem().toString().equals(targetTypes[0])){
-                    newTarget = new BinaryTarget();
-                } else {
-                    newTarget = new IntegerTarget(
-                            Integer.parseInt(repeatsInput.getText().toString()), // target
-                            0   // current
-                    );
-                }
+//                if (targetTypeSpinner.getSelectedItem().toString().equals(targetTypes[0])){
+//                     = new BinaryTarget();
+//                } else {
+//                    newTarget = new IntegerTarget(
+//                            Integer.parseInt(repeatsInput.getText().toString()), // target
+//                            0   // current
+//                    );
+//                }
                 HabitModel.Category selectedCategory = HabitModel.Category.valueOf(
                         categorySpinner.getSelectedItem().toString()
                 );
                 onSave(
                         h,
                         habitName.getText().toString(),
-                        selectedCategory,
-                        newTarget
+                        selectedCategory
                 );
                 getParentFragmentManager().popBackStack();
             }
@@ -179,17 +176,15 @@ public class EditHabitFragment extends Fragment {
     private void onSave(
             HabitModel h,
             String habitName,
-            HabitModel.Category category,
-            Target target
+            HabitModel.Category category
     ) {
         h.name = habitName;
         h.category = category;
-        h.target = target;
         Log.d("EditSave", h.toString());
         HabitApi.updateHabit(this.getContext(), h);
     }
     private void onComplete(HabitModel h) {
-        h.target.complete();
+        h.complete();
     }
     private void onRemove(HabitModel h) {
         Log.d("EditRemove", h.toString());
