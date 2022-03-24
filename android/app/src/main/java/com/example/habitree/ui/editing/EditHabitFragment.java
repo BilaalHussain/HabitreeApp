@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,10 +21,15 @@ import android.widget.Toast;
 
 import com.example.habitree.R;
 import com.example.habitree.api.HabitApi;
+import com.example.habitree.listener.DeleteTagTapped;
+import com.example.habitree.listener.ToggleIsEditing;
+import com.example.habitree.listener.UpdateTag;
 import com.example.habitree.model.DailyHabit;
 import com.example.habitree.model.HabitModel;
 import com.example.habitree.model.TagModel;
 import com.example.habitree.model.WeeklyHabit;
+import com.example.habitree.ui.HabitAdapter;
+import com.example.habitree.ui.TagAdapter;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -70,6 +77,8 @@ public class EditHabitFragment extends Fragment {
         final Spinner habitTypeSpinner = root.findViewById(R.id.habit_type_spinner);
         final EditText repeatsInput = root.findViewById(R.id.repeats_input);
         final TextView repeatsText = root.findViewById(R.id.repeats_label);
+        final RecyclerView tagList = root.findViewById(R.id.tags_list);
+        final Button addTagButton = root.findViewById(R.id.add_tag_button);
 
         habitName.setText(String.format("%s", h.name));
         if (h instanceof WeeklyHabit) {
@@ -124,6 +133,49 @@ public class EditHabitFragment extends Fragment {
             }
         });
 
+        //set up tag recycler
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        TagAdapter tagAdapter = new TagAdapter();
+        tagAdapter.setEventListener(event -> {
+            if (event instanceof DeleteTagTapped) {
+                // delete the tag that has the same id as the tag that is set to be deleted
+                h.tags = h.tags.stream()
+                        .filter(tag -> tag.id != ((DeleteTagTapped) event).id)
+                        .collect(Collectors.toList());
+                tagAdapter.setCurrentTags(h.tags);
+            } else if (event instanceof UpdateTag) {
+                h.tags = h.tags.stream()
+                        .peek(tag -> {
+                                if (tag.id == ((UpdateTag) event).tagId) {
+                                    tag.name = ((UpdateTag) event).tagName;
+                                    tag.isEditing = false;
+                                }
+                        })
+                        .collect(Collectors.toList());
+                tagAdapter.setCurrentTags(h.tags);
+            } else if (event instanceof ToggleIsEditing) {
+                h.tags = h.tags.stream()
+                        .peek(tag -> {
+                            if (tag.id == ((ToggleIsEditing) event).tagId) {
+                                tag.isEditing = ((ToggleIsEditing) event).newEditState;
+                            }
+                        })
+                        .collect(Collectors.toList());
+                tagAdapter.setCurrentTags(h.tags);
+            }
+        }); // need to listen for a tag to be deleted
+
+        tagList.setAdapter(tagAdapter);
+        tagList.setLayoutManager(linearLayoutManager);
+
+        tagAdapter.setCurrentTags(h.tags);
+
+        addTagButton.setOnClickListener(v -> {
+            @SuppressLint("DefaultLocale") TagModel newTag = new TagModel(UUID.randomUUID(), String.format("tag%d", (h.tags.size() + 1)));
+            h.tags.add(newTag);
+            tagAdapter.setCurrentTags(h.tags);
+        });
+
 
         Button button_save = (Button) root.findViewById(R.id.save_habit_button);
         button_save.setOnClickListener(v -> {
@@ -138,14 +190,22 @@ public class EditHabitFragment extends Fragment {
                     targetAmount = Integer.parseInt(repeatsInput.getText().toString());
                 }
 
-                onSave(
-                        h.id,
-                        habitName.getText().toString(),
-                        selectedCategory,
-                        new ArrayList<>(),
-                        targetAmount
-                );
-                getParentFragmentManager().popBackStack();
+                if (habitName.getText().toString().isEmpty()) {
+                    Toast.makeText(getContext(), "Please give your habit a name", Toast.LENGTH_SHORT).show();
+                } else {
+                    // set all the tags to not be editing
+                    List<TagModel> newTags = h.tags.stream()
+                            .peek(tag -> tag.isEditing = false)
+                            .collect(Collectors.toList());
+                    onSave(
+                            h.id,
+                            habitName.getText().toString(),
+                            selectedCategory,
+                            newTags,
+                            targetAmount
+                    );
+                    getParentFragmentManager().popBackStack();
+                }
             }
             catch (NumberFormatException e) {
                 Log.e("EDIT", "Onsave int parse fail" + e.getMessage());
@@ -153,23 +213,6 @@ public class EditHabitFragment extends Fragment {
             }
 
         });
-
-//        Button button_complete = (Button) root.findViewById(R.id.button_complete);
-//        button_complete.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
-//                try {
-//                    onSave(h,
-//                            habitName.getText().toString(),
-//                            0,
-//                            Integer.parseInt(targetInput.getText().toString()));
-//                    getParentFragmentManager().popBackStack();
-//            }
-//                catch (NumberFormatException e) {
-//                Log.e("EDIT", "onComplete int parse fail" + e.getMessage());
-//                    Toast.makeText(getContext(), "Fail", Toast.LENGTH_SHORT).show();
-//            }
-//            }
-//        });
 
         Button button_remove = (Button) root.findViewById(R.id.delete_habit_button);
         button_remove.setOnClickListener(v -> {
