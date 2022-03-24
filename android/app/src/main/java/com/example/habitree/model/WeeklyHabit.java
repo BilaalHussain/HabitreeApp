@@ -13,6 +13,11 @@ public class WeeklyHabit extends HabitModel {
         this.target = target;
     }
 
+    public WeeklyHabit(UUID id, String name, Category category, List<Date> daysHabitCompleted, List<TagModel> tags, int target) {
+        super(id, name, category, daysHabitCompleted, tags);
+        this.target = target;
+    }
+
     public int target;
 
     @Override

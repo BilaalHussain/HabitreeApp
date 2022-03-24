@@ -12,8 +12,10 @@ import java.util.List;
 // handles logic and calls to backend and sends data to the view
 public class HomePresenter implements AbstractPresenter {
     HomeFragment view;
-    public HomePresenter(HomeFragment view) {
+    HabitApi habitApi;
+    public HomePresenter(HomeFragment view, HabitApi habitApi) {
         this.view = view;
+        this.habitApi = habitApi;
     }
 
     @Override
@@ -22,12 +24,12 @@ public class HomePresenter implements AbstractPresenter {
     }
 
     public HomeModel onViewCreated() {
-        List<HabitModel> habits = HabitApi.getAllHabits(view.getContext());
+        List<HabitModel> habits = habitApi.getAllHabits(view.getContext());
         return new HomeModel(habits);
     }
 
     public List<HabitModel> markHabitAsComplete(HabitModel habit) {
-        HabitApi.updateHabit(view.getContext(), habit);
-        return HabitApi.getAllHabits(view.getContext());
+        habitApi.updateHabit(habit);
+        return habitApi.getAllHabits(view.getContext());
     }
 }

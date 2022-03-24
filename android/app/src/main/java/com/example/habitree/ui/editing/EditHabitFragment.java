@@ -35,9 +35,14 @@ import java.util.stream.Stream;
 public class EditHabitFragment extends Fragment {
 
     private final HabitModel h;
-    private EditHabitFragment(HabitModel h) {this.h = h;}
-    public static EditHabitFragment newInstance(HabitModel h) {
-        EditHabitFragment fragment = new EditHabitFragment(h);
+    private final Boolean isCreating;
+    private HabitApi habitApi;
+    private EditHabitFragment(HabitModel h, Boolean isCreating) {
+        this.h = h;
+        this.isCreating = isCreating;
+    }
+    public static EditHabitFragment newInstance(HabitModel h, Boolean isCreating) {
+        EditHabitFragment fragment = new EditHabitFragment(h, isCreating);
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -46,14 +51,13 @@ public class EditHabitFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
     }
 
     @SuppressLint("NewApi")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        habitApi = new HabitApi(requireContext());
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_edit_habit, container, false);
         final TextView habitName = root.findViewById(R.id.habit_name);
@@ -134,9 +138,7 @@ public class EditHabitFragment extends Fragment {
 //                            0   // current
 //                    );
 //                }
-                HabitModel.Category selectedCategory = HabitModel.Category.valueOf(
-                        categorySpinner.getSelectedItem().toString()
-                );
+                HabitModel.Category selectedCategory = HabitModel.Category.ACADEMIC;
                 onSave(
                         h,
                         habitName.getText().toString(),
@@ -181,7 +183,11 @@ public class EditHabitFragment extends Fragment {
         h.name = habitName;
         h.category = category;
         Log.d("EditSave", h.toString());
-        HabitApi.updateHabit(this.getContext(), h);
+        if (isCreating) {
+            habitApi.createHabit(h);
+        } else {
+            habitApi.updateHabit(h);
+        }
     }
     private void onComplete(HabitModel h) {
         h.complete();
