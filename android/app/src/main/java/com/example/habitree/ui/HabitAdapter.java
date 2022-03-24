@@ -55,7 +55,7 @@ public class HabitAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         public void setHabit(HabitModel habit) {
             habitTitle.setText(habit.name);
-            String progress = String.format("%s/%s", habit.current, habit.goal);
+            String progress = "10/10";
             progressNumber.setText(progress);
             itemView.setOnClickListener(v -> eventListener.onEvent(new HabitTapped(habit.id)));
         }
