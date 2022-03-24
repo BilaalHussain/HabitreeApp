@@ -30,9 +30,11 @@ public class UserFragment extends Fragment {
 
         List<HabitModel> habits = (new HabitApi(getContext())).getAllHabits();
         Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.DATE, cal.getFirstDayOfWeek());
+        cal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
         Date startOfWeek = cal.getTime();
-        Log.d("JAMIE", startOfWeek.toString());
         ScoreModel score = new ScoreModel(habits, startOfWeek);
         TreeModel tree = new TreeModel("Good morning!", score.getTreeUri());
         replaceFragment(TreeFragment.newInstance(tree));
@@ -43,7 +45,6 @@ public class UserFragment extends Fragment {
     private void replaceFragment(Fragment f) {
         FragmentManager fm = getParentFragmentManager();
         FragmentTransaction t = fm.beginTransaction().replace(R.id.nav_host_fragment, f);
-        t.addToBackStack(null);
         t.commit();
     }
 }
