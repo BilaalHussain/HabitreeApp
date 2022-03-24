@@ -6,20 +6,34 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 // contains all the information needed for a habit.
 public abstract class HabitModel implements Serializable {
     public enum Category {
-        WORK("Work"),
-        ACADEMIC("Academic"),
-        FITNESS("Fitness"),
-        CREATIVE("Creative"),
-        SELF_HELP("Self Help");
+        WORK("Work", 0),
+        ACADEMIC("Academic", 1),
+        FITNESS("Fitness", 2),
+        CREATIVE("Creative", 3),
+        SELF_HELP("Self Help", 4);
 
         private String displayName;
+        private int index;
 
-        Category(String displayName) { this.displayName = displayName; }
+        Category(String displayName, int index) { this.displayName = displayName; this.index = index; }
         public String toString() { return displayName; }
+        public int getIndex() { return index; }
+    }
+
+    public static Category stringToCategory(String str) {
+        List<Category> matches = Stream.of(HabitModel.Category.values())
+                .filter(category -> {
+                    return category.toString().equals(str);
+                }).collect(Collectors.toList());
+        if (matches.size() != 1) return Category.WORK;
+        return matches.get(0);
     }
 
     public UUID id;
