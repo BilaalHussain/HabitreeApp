@@ -1,6 +1,7 @@
 package com.example.habitree.ui.editing;
 
 import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -148,6 +149,7 @@ public class EditHabitFragment extends Fragment {
                         .peek(tag -> {
                                 if (tag.id == ((UpdateTag) event).tagId) {
                                     tag.name = ((UpdateTag) event).tagName;
+                                    tag.color = ((UpdateTag) event).color;
                                     tag.isEditing = false;
                                 }
                         })
@@ -171,7 +173,12 @@ public class EditHabitFragment extends Fragment {
         tagAdapter.setCurrentTags(h.tags);
 
         addTagButton.setOnClickListener(v -> {
-            @SuppressLint("DefaultLocale") TagModel newTag = new TagModel(UUID.randomUUID(), String.format("tag%d", (h.tags.size() + 1)));
+            Integer defaultColor = TagModel.getValidTagColors(requireContext())[0];
+            @SuppressLint("DefaultLocale") TagModel newTag = new TagModel(
+                    UUID.randomUUID(),
+                    String.format("tag%d", (h.tags.size() + 1)),
+                    defaultColor
+            );
             h.tags.add(newTag);
             tagAdapter.setCurrentTags(h.tags);
         });
