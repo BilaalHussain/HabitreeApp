@@ -7,6 +7,7 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.habitree.R;
@@ -59,6 +60,9 @@ public class HabitAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public static class HabitViewHolder extends RecyclerView.ViewHolder {
         final CheckBox habitTitleAndCheck = itemView.findViewById(R.id.habit_name);
         final TextView progressNumber = itemView.findViewById(R.id.progress_number);
+        final RecyclerView tagList = itemView.findViewById(R.id.tag_list);
+        final ViewTagAdapter viewTagAdapter = new ViewTagAdapter();
+        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(itemView.getContext(), LinearLayoutManager.HORIZONTAL, false);
         EventListener eventListener;
 
         public void setHabit(HabitModel habit) {
@@ -72,6 +76,15 @@ public class HabitAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             progressNumber.setText(habit.getReadableStatusString(lastSundayDate));
             itemView.setOnClickListener(v -> eventListener.onEvent(new HabitTapped(habit.id)));
             habitTitleAndCheck.setOnClickListener(view -> eventListener.onEvent(new CheckBoxTapped(habit.id)));
+
+            if (!habit.tags.isEmpty()) {
+                tagList.setVisibility(View.VISIBLE);
+                tagList.setAdapter(viewTagAdapter);
+                tagList.setLayoutManager(linearLayoutManager);
+                viewTagAdapter.setCurrentTags(habit.tags);
+            } else {
+                tagList.setVisibility(View.GONE);
+            }
         }
 
         public HabitViewHolder(@NonNull View itemView, EventListener eventListener) {

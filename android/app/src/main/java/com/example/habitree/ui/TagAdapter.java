@@ -41,10 +41,6 @@ public class TagAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         notifyDataSetChanged();
     }
 
-    public List<TagModel>getCurrentTags() {
-        return currentTags;
-    }
-
     @NonNull
     @Override
     public TagViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
