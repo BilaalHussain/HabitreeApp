@@ -143,6 +143,14 @@ public class HabitApi {
         );
     }
 
+    private void deleteHabitFromDisk(UUID habitId) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        String selection = HabitContract.HabitEntry.COLUMN_NAME_ID + "=?";
+        String[] selectionArgs = { habitId.toString() };
+
+        int deletedRows = db.delete(HabitContract.HabitEntry.TABLE_NAME, selection, selectionArgs);
+    }
+
     public void createHabit(HabitModel habit) {
         synchronized (HabitApi.class) {
             saveNewHabitToDisk(habit);
@@ -158,6 +166,12 @@ public class HabitApi {
     public void updateHabit(HabitModel habit) {
         synchronized (HabitApi.class) {
             saveHabitToDisk(habit);
+        }
+    }
+
+    public void deleteHabit(UUID habitId) {
+        synchronized (HabitApi.class) {
+            deleteHabitFromDisk(habitId);
         }
     }
 
