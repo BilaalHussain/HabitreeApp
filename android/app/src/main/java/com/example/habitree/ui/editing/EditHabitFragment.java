@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,6 +24,8 @@ import com.example.habitree.api.HabitApi;
 import com.example.habitree.model.DailyHabit;
 import com.example.habitree.model.HabitModel;
 import com.example.habitree.model.WeeklyHabit;
+import com.google.android.gms.location.GeofencingClient;
+import com.google.android.gms.location.LocationServices;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,6 +39,8 @@ import java.util.stream.Stream;
 public class EditHabitFragment extends Fragment {
 
     private final HabitModel h;
+    private GeofencingClient geofencingClient;
+
     private EditHabitFragment(HabitModel h) {this.h = h;}
     public static EditHabitFragment newInstance(HabitModel h) {
         EditHabitFragment fragment = new EditHabitFragment(h);
@@ -46,8 +52,7 @@ public class EditHabitFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
+        geofencingClient = LocationServices.getGeofencingClient(getContext());
     }
 
     @SuppressLint("NewApi")

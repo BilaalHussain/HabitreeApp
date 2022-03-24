@@ -13,7 +13,8 @@ public abstract class AbstractAutocompleteDelegate {
     }
 
     public abstract boolean isEnabled();
-    public abstract void setEnabled(boolean e);
+    public abstract void enable();
+    public abstract void disable();
     public abstract void cleanup();
 
 }

@@ -24,6 +24,7 @@ import com.example.habitree.model.HomeModel;
 import com.example.habitree.presenter.HomePresenter;
 import com.example.habitree.ui.HabitAdapter;
 import com.example.habitree.ui.editing.EditHabitFragment;
+import com.example.habitree.ui.editing.MapsFragment;
 import com.example.habitree.view.AbstractView;
 
 import java.util.ArrayList;
@@ -78,7 +79,10 @@ public class HomeFragment extends Fragment implements AbstractView<HomePresenter
                     new ArrayList<>()
             );
             homeModel.habits.add(newHabit);
-            replaceFragment(EditHabitFragment.newInstance(newHabit));
+
+            replaceFragment((MapsFragment.newInstance()));
+            // TODO: uncomment when maps testing done
+            //replaceFragment(EditHabitFragment.newInstance(newHabit));
         });
 
         habitList.setAdapter(habitAdapter);
