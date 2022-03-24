@@ -17,14 +17,25 @@
 
 
     <Button
+        android:id="@+id/cancel_geofence_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/cancel_geofence_text"
         android:layout_gravity="bottom|start"
-        android:layout_marginBottom="?attr/actionBarSize"
         android:layout_marginStart="16dp"
+        android:layout_marginBottom="?attr/actionBarSize"
+        android:text="@string/cancel_geofence_text" />
+
+    <Button
+        android:id="@+id/erase_geofence_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/delete_geofence_text"
+        android:layout_gravity="bottom|center"
+        android:layout_marginBottom="?attr/actionBarSize"
+        android:layout_marginEnd="16dp"
         />
     <Button
+        android:id="@+id/confirm_geofence_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/create_geofence_text"

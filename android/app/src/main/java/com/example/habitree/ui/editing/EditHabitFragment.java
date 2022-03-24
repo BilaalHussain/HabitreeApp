@@ -68,6 +68,7 @@ public class EditHabitFragment extends Fragment {
         final EditText repeatsInput = root.findViewById(R.id.repeats_input);
         final TextView repeatsText = root.findViewById(R.id.repeats_label);
 
+
         habitName.setText(String.format("%s", h.name));
         if (h instanceof WeeklyHabit) {
             repeatsInput.setVisibility(View.VISIBLE);
@@ -156,9 +157,19 @@ public class EditHabitFragment extends Fragment {
 
         });
 
+        final Button manageGeofence = root.findViewById(R.id.geofence_button);
+        manageGeofence.setOnClickListener(
+                view -> {
+                    getParentFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.nav_host_fragment,
+                                    MapsFragment.newInstance("TODO_ID"))
+                            .addToBackStack(null)
+                            .commit();
+                }
+        );
 //        Button button_complete = (Button) root.findViewById(R.id.button_complete);
-//        button_complete.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
+//        button_complete.setOnClickListener(view ->{
 //                try {
 //                    onSave(h,
 //                            habitName.getText().toString(),

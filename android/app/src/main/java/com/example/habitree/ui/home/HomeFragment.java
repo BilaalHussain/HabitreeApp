@@ -80,9 +80,8 @@ public class HomeFragment extends Fragment implements AbstractView<HomePresenter
             );
             homeModel.habits.add(newHabit);
 
-            replaceFragment((MapsFragment.newInstance()));
             // TODO: uncomment when maps testing done
-            //replaceFragment(EditHabitFragment.newInstance(newHabit));
+            replaceFragment(EditHabitFragment.newInstance(newHabit));
         });
 
         habitList.setAdapter(habitAdapter);

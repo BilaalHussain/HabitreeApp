@@ -14,7 +14,7 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="channel_name">Habitree</string>
-    <string name="button_text">Create Geofence</string>
-    <string name="create_geofence_text">Create Geofence</string>
+    <string name="create_geofence_text">Confirm</string>
     <string name="cancel_geofence_text">Cancel</string>
+    <string name="delete_geofence_text">Delete</string>
 </resources>

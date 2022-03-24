@@ -1,17 +1,10 @@
 package com.example.habitree.model;
 
-import com.example.habitree.autocomplete.AbstractAutocompleteDelegate;
-import android.annotation.SuppressLint;
-import android.os.Build;
-
 import java.io.Serializable;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 // idk a better way to make models in java :///
 // contains all the information needed for a habit.
