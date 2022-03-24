@@ -1,18 +1,12 @@
 package com.example.habitree.model;
 
-import android.annotation.SuppressLint;
-import android.os.Build;
-
 import java.io.Serializable;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
-// idk a better way to make models in java :///
 // contains all the information needed for a habit.
 public abstract class HabitModel implements Serializable {
     public enum Category {
@@ -44,6 +38,8 @@ public abstract class HabitModel implements Serializable {
         this.name = name;
         this.category = category;
         this.tags = tags;
+        this.daysHabitCompleted = new ArrayList<>();
+        this.tags = new ArrayList<>();
     }
 
     public HabitModel(

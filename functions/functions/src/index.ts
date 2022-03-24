@@ -28,8 +28,12 @@ export const tree = functions.runWith(runtimeOpts).https.onRequest(
 function generateScreenShot(query: ParsedQs): Promise<Buffer> {
   return new Promise<Buffer>(async (resolve, reject) => {
     try {
-      const browser = await puppeteer.launch({args: ["--no-sandbox"]});
+      const browser = await puppeteer.launch({args: ["--no-sandbox"], defaultViewport: null});
       const page = await browser.newPage();
+      await page.setViewport({
+        width: 550,
+        height: 650
+      })
       await page.goto(`https://cs446-habitree.web.app/?red=${query.red}&green=${query.green}&blue=${query.blue}&orange=${query.orange}&purple=${query.purple}&seed=${query.seed}`, {
         waitUntil: "networkidle2",
       });
