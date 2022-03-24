@@ -115,6 +115,7 @@ public class HabitApi {
         values.put(HabitContract.HabitEntry.COLUMN_NAME_CATEGORY, category.toString());
         values.put(HabitContract.HabitEntry.COLUMN_NAME_NAME, habitName);
         values.put(HabitContract.HabitEntry.COLUMN_NAME_TYPE, targetAmount);
+        values.put(HabitContract.HabitEntry.COLUMN_NAME_DAYS_COMPLETED, gson.toJson(new ArrayList<>()));
         values.put(HabitContract.HabitEntry.COLUMN_NAME_TAGS, gson.toJson(tags));
 
         long newRowId = db.insert(HabitContract.HabitEntry.TABLE_NAME, null, values);
@@ -154,6 +155,23 @@ public class HabitApi {
         int deletedRows = db.delete(HabitContract.HabitEntry.TABLE_NAME, selection, selectionArgs);
     }
 
+    private void updateHabitDatesCompletedOnDisk(UUID habitId, List<Date> date) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        String selection = HabitContract.HabitEntry.COLUMN_NAME_ID + "=?";
+        String[] selectionArgs = { habitId.toString() };
+
+        ContentValues values = new ContentValues();
+        values.put(HabitContract.HabitEntry.COLUMN_NAME_DAYS_COMPLETED, gson.toJson(date));
+        values.put(HabitContract.HabitEntry.COLUMN_NAME_ID, habitId.toString());
+
+        long newRowId = db.update(
+                HabitContract.HabitEntry.TABLE_NAME,
+                values,
+                selection,
+                selectionArgs
+        );
+    }
+
     public void createHabit(
             UUID habitId,
              String habitName,
@@ -187,6 +205,12 @@ public class HabitApi {
     public void deleteHabit(UUID habitId) {
         synchronized (HabitApi.class) {
             deleteHabitFromDisk(habitId);
+        }
+    }
+
+    public void updateHabitDatesCompleted(UUID habitId, List<Date> dates) {
+        synchronized (HabitApi.class) {
+            updateHabitDatesCompletedOnDisk(habitId, dates);
         }
     }
 

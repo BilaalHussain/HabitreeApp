@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.habitree.R;
 import com.example.habitree.api.HabitApi;
+import com.example.habitree.listener.CheckBoxTapped;
 import com.example.habitree.listener.HabitTapped;
 import com.example.habitree.model.DailyHabit;
 import com.example.habitree.model.HabitModel;
@@ -28,6 +29,7 @@ import com.example.habitree.ui.editing.EditHabitFragment;
 import com.example.habitree.view.AbstractView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.OptionalInt;
 import java.util.UUID;
 import java.util.stream.IntStream;
@@ -60,15 +62,36 @@ public class HomeFragment extends Fragment implements AbstractView<HomePresenter
 
         HabitAdapter habitAdapter = new HabitAdapter();
         habitAdapter.setEventListener(event -> {
-            UUID habitId = ((HabitTapped) event).id;
-            OptionalInt index = IntStream.range(0, homeModel.habits.size())
-                    .filter(x -> habitId.equals(homeModel.habits.get(x).id))
-                    .findFirst();
-            if (index.isPresent()) {
-                replaceFragment(EditHabitFragment.newInstance(
-                        homeModel.habits.get(index.getAsInt()),
-                        false
-                ));
+            if (event instanceof HabitTapped) {
+                UUID habitId = ((HabitTapped) event).id;
+                OptionalInt index = IntStream.range(0, homeModel.habits.size())
+                        .filter(x -> habitId.equals(homeModel.habits.get(x).id))
+                        .findFirst();
+                if (index.isPresent()) {
+                    replaceFragment(EditHabitFragment.newInstance(
+                            homeModel.habits.get(index.getAsInt()),
+                            false
+                    ));
+                }
+            } else if (event instanceof CheckBoxTapped) {
+                UUID habitId = ((CheckBoxTapped) event).id;
+                OptionalInt index = IntStream.range(0, homeModel.habits.size())
+                        .filter(x -> habitId.equals(homeModel.habits.get(x).id))
+                        .findFirst();
+                if (index.isPresent()) {
+                    HabitModel habitToUpdate =  homeModel.habits.get(index.getAsInt());
+
+                    if (habitToUpdate.isToDoToday()) {
+                        habitToUpdate.complete();
+                    } else {
+                        habitToUpdate.uncomplete();
+                    }
+                    habitApi.updateHabitDatesCompleted(
+                            habitToUpdate.id,
+                            habitToUpdate.daysHabitCompleted
+                    );
+                    habitAdapter.setCurrentHabits(homeModel.habits);
+                }
             }
             // TODO edit this event listener to instead navigate to the habit edit page
 //            List<HabitModel> newHabits = presenter.markHabitAsComplete(habit);
