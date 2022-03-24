@@ -10,6 +10,8 @@ import com.example.habitree.database.HabitDbHelper;
 import com.example.habitree.model.DailyHabit;
 import com.example.habitree.model.HabitModel;
 import com.example.habitree.model.WeeklyHabit;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -17,31 +19,21 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 public class HabitApi {
     HabitDbHelper dbHelper;
+    Gson gson = new Gson();
 
     public HabitApi(Context context) {
         synchronized (HabitApi.class) {
             dbHelper = new HabitDbHelper(context);
         }
-    }
-
-    public void initializeDatabase() {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(HabitContract.HabitEntry.COLUMN_NAME_ID, UUID.randomUUID().toString());
-        values.put(HabitContract.HabitEntry.COLUMN_NAME_CATEGORY, HabitModel.Category.ACADEMIC.toString());
-        values.put(HabitContract.HabitEntry.COLUMN_NAME_NAME, "my habit name");
-        values.put(HabitContract.HabitEntry.COLUMN_NAME_DAYS_COMPLETED, new ArrayList<>().toString());
-        values.put(HabitContract.HabitEntry.COLUMN_NAME_TYPE, 0);
-        values.put(HabitContract.HabitEntry.COLUMN_NAME_TAGS, new ArrayList<>().toString());
-
-        long newRowId = db.insert(HabitContract.HabitEntry.TABLE_NAME, null, values);
     }
 
     private List<HabitModel> loadHabitsFromDisk() {
@@ -76,6 +68,8 @@ public class HabitApi {
 
             HabitModel habit;
             // its a daily habit
+            Type listType = new TypeToken<ArrayList<Date>>(){}.getType();
+            List<Date> daysCompleted = gson.fromJson(sDaysCompleted, listType);
             if (type == 0) {
                 habit = new DailyHabit(
                         UUID.fromString(habitId),
@@ -108,7 +102,7 @@ public class HabitApi {
         values.put(HabitContract.HabitEntry.COLUMN_NAME_ID, habit.id.toString());
         values.put(HabitContract.HabitEntry.COLUMN_NAME_CATEGORY, habit.category.toString());
         values.put(HabitContract.HabitEntry.COLUMN_NAME_NAME, habit.name);
-        values.put(HabitContract.HabitEntry.COLUMN_NAME_DAYS_COMPLETED, new ArrayList<>().toString());
+        values.put(HabitContract.HabitEntry.COLUMN_NAME_DAYS_COMPLETED, gson.toJson(habit.daysHabitCompleted));
         if (habit instanceof WeeklyHabit) {
             values.put(HabitContract.HabitEntry.COLUMN_NAME_TYPE, ((WeeklyHabit) habit).target );
         } else {
