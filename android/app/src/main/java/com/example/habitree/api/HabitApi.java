@@ -9,6 +9,7 @@ import com.example.habitree.database.HabitContract;
 import com.example.habitree.database.HabitDbHelper;
 import com.example.habitree.model.DailyHabit;
 import com.example.habitree.model.HabitModel;
+import com.example.habitree.model.TagModel;
 import com.example.habitree.model.WeeklyHabit;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -67,25 +68,30 @@ public class HabitApi {
             int type = cursor.getInt(cursor.getColumnIndexOrThrow(HabitContract.HabitEntry.COLUMN_NAME_TYPE));
 
             HabitModel habit;
+            Type dateListType = new TypeToken<ArrayList<Date>>(){}.getType();
+            List<Date> daysCompleted = gson.fromJson(sDaysCompleted, dateListType);
+
+            Type tagListType = new TypeToken<ArrayList<TagModel>>(){}.getType();
+            List<TagModel> tags = gson.fromJson(sTag, tagListType);
+
+            HabitModel.Category category = HabitModel.stringToCategory(sCategory);
             // its a daily habit
-            Type listType = new TypeToken<ArrayList<Date>>(){}.getType();
-            List<Date> daysCompleted = gson.fromJson(sDaysCompleted, listType);
             if (type == 0) {
                 habit = new DailyHabit(
                         UUID.fromString(habitId),
                         sName,
-                        HabitModel.Category.ACADEMIC,
-                        new ArrayList<>(), //TODO
-                        new ArrayList<>() //TODO
+                        category,
+                        daysCompleted, //TODO
+                        tags //TODO
                 );
             } else {
                 //its a weekly habit
                 habit = new WeeklyHabit(
                         UUID.fromString(habitId),
                         sName,
-                        HabitModel.Category.ACADEMIC,
-                        new ArrayList<>(), //TODO
-                        new ArrayList<>(), //TODO
+                        category,
+                        daysCompleted, //TODO
+                        tags, //TODO
                         type
                 );
             }
@@ -108,7 +114,7 @@ public class HabitApi {
         } else {
             values.put(HabitContract.HabitEntry.COLUMN_NAME_TYPE, 0);
         }
-        values.put(HabitContract.HabitEntry.COLUMN_NAME_TAGS, new ArrayList<>().toString());
+        values.put(HabitContract.HabitEntry.COLUMN_NAME_TAGS, gson.toJson(habit.tags));
 
         long newRowId = db.insert(HabitContract.HabitEntry.TABLE_NAME, null, values);
     }
@@ -121,13 +127,13 @@ public class HabitApi {
         ContentValues values = new ContentValues();
         values.put(HabitContract.HabitEntry.COLUMN_NAME_CATEGORY, habit.category.toString());
         values.put(HabitContract.HabitEntry.COLUMN_NAME_NAME, habit.name);
-        values.put(HabitContract.HabitEntry.COLUMN_NAME_DAYS_COMPLETED, new ArrayList<>().toString());
+        values.put(HabitContract.HabitEntry.COLUMN_NAME_DAYS_COMPLETED, gson.toJson(habit.daysHabitCompleted));
         if (habit instanceof WeeklyHabit) {
             values.put(HabitContract.HabitEntry.COLUMN_NAME_TYPE, ((WeeklyHabit) habit).target );
         } else {
             values.put(HabitContract.HabitEntry.COLUMN_NAME_TYPE, 0);
         }
-        values.put(HabitContract.HabitEntry.COLUMN_NAME_TAGS, new ArrayList<>().toString());
+        values.put(HabitContract.HabitEntry.COLUMN_NAME_TAGS, gson.toJson(habit.tags));
 
         long newRowId = db.update(
                 HabitContract.HabitEntry.TABLE_NAME,

@@ -25,6 +25,7 @@ import com.example.habitree.model.WeeklyHabit;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
@@ -105,6 +106,8 @@ public class EditHabitFragment extends Fragment {
         frequencySpinner.setAdapter(frequencyAdapter);
         String[] targetTypes = getResources().getStringArray(R.array.target_types);
 
+        categorySpinner.setSelection(h.category.getIndex());
+
         targetTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -129,16 +132,9 @@ public class EditHabitFragment extends Fragment {
         Button button_save = (Button) root.findViewById(R.id.save_habit_button);
         button_save.setOnClickListener(v -> {
             try {
-                // it is binary
-//                if (targetTypeSpinner.getSelectedItem().toString().equals(targetTypes[0])){
-//                     = new BinaryTarget();
-//                } else {
-//                    newTarget = new IntegerTarget(
-//                            Integer.parseInt(repeatsInput.getText().toString()), // target
-//                            0   // current
-//                    );
-//                }
-                HabitModel.Category selectedCategory = HabitModel.Category.ACADEMIC;
+                HabitModel.Category selectedCategory = HabitModel.stringToCategory(
+                        categorySpinner.getSelectedItem().toString()
+                );
                 onSave(
                         h,
                         habitName.getText().toString(),
