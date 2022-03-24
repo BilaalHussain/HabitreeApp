@@ -1,6 +1,8 @@
 package com.example.habitree.model;
 
 import java.io.Serializable;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -75,10 +77,29 @@ public abstract class HabitModel implements Serializable {
         daysHabitCompleted.add(Calendar.getInstance().getTime());
     }
 
+    public void uncomplete() {
+        // removes the current day from the days habit completed
+        Date currTime = Calendar.getInstance().getTime();
+        Instant instant1 = currTime.toInstant().truncatedTo(ChronoUnit.DAYS);
+        daysHabitCompleted.removeIf(
+                date -> instant1.equals(date.toInstant().truncatedTo(ChronoUnit.DAYS))
+        );
+    }
+
+    public boolean isToDoToday() {
+        Date currTime = Calendar.getInstance().getTime();
+        Instant instant1 = currTime.toInstant().truncatedTo(ChronoUnit.DAYS);
+        return !daysHabitCompleted.stream().anyMatch(day ->
+                instant1.equals(day.toInstant().truncatedTo(ChronoUnit.DAYS))
+        );
+    }
+
     // getCompletionStatus/target amount (7 if daily, set if Weekly)
     abstract float getTreeWeeklyScore(Date startOfWeek);
     // how many days have they completed this habit since startOfWeek
     abstract int getCompletionStatus(Date startOfWeek);
     // does the user still have to do this habit this week
-    abstract boolean isToDo(Date startOfWeek);
+    abstract public boolean isToDo(Date startOfWeek);
+
+    abstract public String getReadableStatusString(Date startOfWeek);
 }
