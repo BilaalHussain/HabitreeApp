@@ -22,7 +22,7 @@
         android:autofillHints="Habit Name" />
 
     <TextView
-        android:id="@+id/target_label"
+        android:id="@+id/habit_type_label"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textSize="14sp"
@@ -31,19 +31,19 @@
         android:text="Type of Habit"
         app:layout_constraintTop_toBottomOf="@id/habit_name"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/target_type_spinner"
+        app:layout_constraintEnd_toStartOf="@id/habit_type_spinner"
         tools:text="Type of Habit" />
 
     <Spinner
-        android:id="@+id/target_type_spinner"
+        android:id="@+id/habit_type_spinner"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textSize="14sp"
         android:textColor="@color/black"
-        app:layout_constraintTop_toTopOf="@id/target_label"
-        app:layout_constraintBottom_toBottomOf="@id/target_label"
+        app:layout_constraintTop_toTopOf="@id/habit_type_label"
+        app:layout_constraintBottom_toBottomOf="@id/habit_type_label"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/target_label" />
+        app:layout_constraintStart_toEndOf="@id/habit_type_label" />
 
     <TextView
         android:id="@+id/repeats_label"
@@ -53,12 +53,12 @@
         android:textColor="@color/black"
         android:layout_marginTop="16dp"
         android:layout_marginStart="@dimen/activity_vertical_margin"
-        android:text="Target Amount"
+        android:text="How many times per week"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/target_label"
+        app:layout_constraintTop_toBottomOf="@id/habit_type_label"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/repeats_input"
-        tools:text="Target Amount"
+        tools:text="How many times per week"
         tools:visibility="visible"/>
 
     <EditText
@@ -97,30 +97,6 @@
         app:layout_constraintTop_toTopOf="@id/category_label"
         app:layout_constraintBottom_toBottomOf="@id/category_label"
         app:layout_constraintStart_toEndOf="@id/category_label"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
-    <TextView
-        android:id="@+id/frequency_label"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:textSize="14sp"
-        android:textColor="@color/black"
-        android:layout_marginTop="20dp"
-        android:text="Frequency"
-        app:layout_constraintTop_toBottomOf="@id/category_label"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/frequency_spinner"
-        tools:text="Frequency" />
-
-    <Spinner
-        android:id="@+id/frequency_spinner"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:textSize="14sp"
-        android:textColor="@color/black"
-        app:layout_constraintTop_toTopOf="@id/frequency_label"
-        app:layout_constraintBottom_toBottomOf="@id/frequency_label"
-        app:layout_constraintStart_toEndOf="@id/frequency_label"
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <Button

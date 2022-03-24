@@ -101,39 +101,42 @@ public class HabitApi {
         return habits;
     }
 
-    private void saveNewHabitToDisk(HabitModel habit) {
+    private void saveNewHabitToDisk(
+            UUID habitId,
+            String habitName,
+            HabitModel.Category category,
+            List<TagModel> tags,
+            int targetAmount
+    ) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(HabitContract.HabitEntry.COLUMN_NAME_ID, habit.id.toString());
-        values.put(HabitContract.HabitEntry.COLUMN_NAME_CATEGORY, habit.category.toString());
-        values.put(HabitContract.HabitEntry.COLUMN_NAME_NAME, habit.name);
-        values.put(HabitContract.HabitEntry.COLUMN_NAME_DAYS_COMPLETED, gson.toJson(habit.daysHabitCompleted));
-        if (habit instanceof WeeklyHabit) {
-            values.put(HabitContract.HabitEntry.COLUMN_NAME_TYPE, ((WeeklyHabit) habit).target );
-        } else {
-            values.put(HabitContract.HabitEntry.COLUMN_NAME_TYPE, 0);
-        }
-        values.put(HabitContract.HabitEntry.COLUMN_NAME_TAGS, gson.toJson(habit.tags));
+        values.put(HabitContract.HabitEntry.COLUMN_NAME_ID, habitId.toString());
+        values.put(HabitContract.HabitEntry.COLUMN_NAME_CATEGORY, category.toString());
+        values.put(HabitContract.HabitEntry.COLUMN_NAME_NAME, habitName);
+        values.put(HabitContract.HabitEntry.COLUMN_NAME_TYPE, targetAmount);
+        values.put(HabitContract.HabitEntry.COLUMN_NAME_TAGS, gson.toJson(tags));
 
         long newRowId = db.insert(HabitContract.HabitEntry.TABLE_NAME, null, values);
     }
 
-    private void saveHabitToDisk(HabitModel habit) {
+    private void saveHabitToDisk(
+            UUID habitId,
+            String habitName,
+            HabitModel.Category category,
+            List<TagModel> tags,
+            int targetAmount
+    ) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         String selection = HabitContract.HabitEntry.COLUMN_NAME_ID + "=?";
-        String[] selectionArgs = { habit.id.toString() };
+        String[] selectionArgs = { habitId.toString() };
 
         ContentValues values = new ContentValues();
-        values.put(HabitContract.HabitEntry.COLUMN_NAME_CATEGORY, habit.category.toString());
-        values.put(HabitContract.HabitEntry.COLUMN_NAME_NAME, habit.name);
-        values.put(HabitContract.HabitEntry.COLUMN_NAME_DAYS_COMPLETED, gson.toJson(habit.daysHabitCompleted));
-        if (habit instanceof WeeklyHabit) {
-            values.put(HabitContract.HabitEntry.COLUMN_NAME_TYPE, ((WeeklyHabit) habit).target );
-        } else {
-            values.put(HabitContract.HabitEntry.COLUMN_NAME_TYPE, 0);
-        }
-        values.put(HabitContract.HabitEntry.COLUMN_NAME_TAGS, gson.toJson(habit.tags));
+        values.put(HabitContract.HabitEntry.COLUMN_NAME_ID, habitId.toString());
+        values.put(HabitContract.HabitEntry.COLUMN_NAME_CATEGORY, category.toString());
+        values.put(HabitContract.HabitEntry.COLUMN_NAME_NAME, habitName);
+        values.put(HabitContract.HabitEntry.COLUMN_NAME_TYPE, targetAmount);
+        values.put(HabitContract.HabitEntry.COLUMN_NAME_TAGS, gson.toJson(tags));
 
         long newRowId = db.update(
                 HabitContract.HabitEntry.TABLE_NAME,
@@ -151,9 +154,15 @@ public class HabitApi {
         int deletedRows = db.delete(HabitContract.HabitEntry.TABLE_NAME, selection, selectionArgs);
     }
 
-    public void createHabit(HabitModel habit) {
+    public void createHabit(
+            UUID habitId,
+             String habitName,
+             HabitModel.Category category,
+             List<TagModel> tags,
+             int targetAmount
+    ) {
         synchronized (HabitApi.class) {
-            saveNewHabitToDisk(habit);
+            saveNewHabitToDisk(habitId, habitName, category, tags, targetAmount);
         }
     }
 
@@ -163,9 +172,15 @@ public class HabitApi {
         }
     }
 
-    public void updateHabit(HabitModel habit) {
+    public void updateHabit(
+            UUID habitId,
+            String habitName,
+            HabitModel.Category category,
+            List<TagModel> tags,
+            int targetAmount
+    ) {
         synchronized (HabitApi.class) {
-            saveHabitToDisk(habit);
+            saveHabitToDisk(habitId, habitName, category, tags, targetAmount);
         }
     }
 
