@@ -23,10 +23,18 @@
         android:layout_height="wrap_content"
         android:textSize="12sp"
         android:textColor="@color/black"
-        android:minWidth="100dp"
+        android:padding="4dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <Spinner
+        android:id="@+id/color_picker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/edit_tag_name"
+        app:layout_constraintBottom_toBottomOf="@id/edit_tag_name"
+        app:layout_constraintStart_toEndOf="@id/edit_tag_name" />
 
     <ImageButton
         android:id="@+id/done_editing_button"
