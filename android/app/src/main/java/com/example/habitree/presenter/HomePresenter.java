@@ -29,7 +29,9 @@ public class HomePresenter implements AbstractPresenter {
     }
 
     public List<HabitModel> markHabitAsComplete(HabitModel habit) {
-        habitApi.updateHabit(habit);
+//        habitApi.updateHabit(
+//
+//        );
         return habitApi.getAllHabits();
     }
 }
