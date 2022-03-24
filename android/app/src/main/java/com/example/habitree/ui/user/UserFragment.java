@@ -27,7 +27,10 @@ public class UserFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_user, container, false);
+        return root;
+    }
 
+    private void renderTree() {
         List<HabitModel> habits = (new HabitApi(getContext())).getAllHabits();
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
@@ -38,13 +41,17 @@ public class UserFragment extends Fragment {
         ScoreModel score = new ScoreModel(habits, startOfWeek);
         TreeModel tree = new TreeModel("Good morning!", score.getTreeUri());
         replaceFragment(TreeFragment.newInstance(tree));
-
-        return root;
     }
 
     private void replaceFragment(Fragment f) {
         FragmentManager fm = getParentFragmentManager();
         FragmentTransaction t = fm.beginTransaction().replace(R.id.nav_host_fragment, f);
         t.commit();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        renderTree();
     }
 }
