@@ -46,6 +46,20 @@ public abstract class HabitModel implements Serializable {
         this.tags = tags;
     }
 
+    public HabitModel(
+            UUID id,
+            String name,
+            Category category,
+            List<Date> daysHabitCompleted,
+            List<TagModel> tags
+    ) {
+        this.id = id;
+        this.name = name;
+        this.category = category;
+        this.tags = tags;
+        this.daysHabitCompleted = daysHabitCompleted;
+    }
+
     public void complete() {
         // adds the current day to the completed days
         daysHabitCompleted.add(Calendar.getInstance().getTime());

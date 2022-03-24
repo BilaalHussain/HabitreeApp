@@ -14,6 +14,10 @@ public class DailyHabit extends HabitModel {
         super(id, name, category, tags);
     }
 
+    public DailyHabit(UUID id, String name, Category category, List<Date> daysHabitCompleted, List<TagModel> tags) {
+        super(id, name, category, daysHabitCompleted, tags);
+    }
+
     @Override
     float getTreeWeeklyScore(Date startOfWeek) {
         return (float) this.getCompletionStatus(startOfWeek)/7f;
