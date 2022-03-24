@@ -28,7 +28,7 @@ public class UserFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_user, container, false);
 
-        List<HabitModel> habits = HabitApi.getAllHabits(getContext());
+        List<HabitModel> habits = (new HabitApi(getContext())).getAllHabits();
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.DATE, cal.getFirstDayOfWeek());
         Date startOfWeek = cal.getTime();

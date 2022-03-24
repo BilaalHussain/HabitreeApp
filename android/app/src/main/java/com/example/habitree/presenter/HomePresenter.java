@@ -24,12 +24,12 @@ public class HomePresenter implements AbstractPresenter {
     }
 
     public HomeModel onViewCreated() {
-        List<HabitModel> habits = habitApi.getAllHabits(view.getContext());
+        List<HabitModel> habits = habitApi.getAllHabits();
         return new HomeModel(habits);
     }
 
     public List<HabitModel> markHabitAsComplete(HabitModel habit) {
         habitApi.updateHabit(habit);
-        return habitApi.getAllHabits(view.getContext());
+        return habitApi.getAllHabits();
     }
 }

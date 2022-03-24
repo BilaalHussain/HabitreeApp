@@ -44,7 +44,7 @@ public class HabitApi {
         long newRowId = db.insert(HabitContract.HabitEntry.TABLE_NAME, null, values);
     }
 
-    private List<HabitModel> loadHabitsFromDisk(Context context) {
+    private List<HabitModel> loadHabitsFromDisk() {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         String[] projection = {
                 HabitContract.HabitEntry.COLUMN_NAME_ID,
@@ -149,9 +149,9 @@ public class HabitApi {
         }
     }
 
-    public List<HabitModel> getAllHabits(Context context) {
+    public List<HabitModel> getAllHabits() {
         synchronized (HabitApi.class) {
-            return loadHabitsFromDisk(context);
+            return loadHabitsFromDisk();
         }
     }
 
