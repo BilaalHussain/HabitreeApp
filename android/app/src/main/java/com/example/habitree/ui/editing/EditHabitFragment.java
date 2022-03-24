@@ -167,7 +167,10 @@ public class EditHabitFragment extends Fragment {
 //        });
 
         Button button_remove = (Button) root.findViewById(R.id.delete_habit_button);
-        button_remove.setOnClickListener(v -> onRemove(h));
+        button_remove.setOnClickListener(v -> {
+            onRemove(h);
+            getParentFragmentManager().popBackStack();
+        });
         return root;
     }
 
@@ -190,6 +193,6 @@ public class EditHabitFragment extends Fragment {
     }
     private void onRemove(HabitModel h) {
         Log.d("EditRemove", h.toString());
-        Toast.makeText(getContext(), "Not implemented", Toast.LENGTH_SHORT).show();
+        habitApi.deleteHabit(h.id);
     }
 }
