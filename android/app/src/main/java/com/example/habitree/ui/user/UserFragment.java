@@ -18,6 +18,8 @@ import com.example.habitree.model.ScoreModel;
 import com.example.habitree.model.TreeModel;
 import com.example.habitree.ui.tree.TreeFragment;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -27,23 +29,32 @@ public class UserFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_user, container, false);
-
-        List<HabitModel> habits = HabitApi.getAllHabits(getContext());
-        Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.DATE, cal.getFirstDayOfWeek());
-        Date startOfWeek = cal.getTime();
-        Log.d("JAMIE", startOfWeek.toString());
-        ScoreModel score = new ScoreModel(habits, startOfWeek);
-        TreeModel tree = new TreeModel("Good morning!", score.getTreeUri());
-        replaceFragment(TreeFragment.newInstance(tree));
-
         return root;
+    }
+
+    private void renderTree() {
+        List<HabitModel> habits = (new HabitApi(getContext())).getAllHabits();
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        Date startOfWeek = cal.getTime();
+        ScoreModel score = new ScoreModel(habits, startOfWeek);
+        DateFormat df = new SimpleDateFormat("MMMM dd, yyyy");
+        TreeModel tree = new TreeModel("Week of " + df.format(startOfWeek), score.getTreeUri());
+        replaceFragment(TreeFragment.newInstance(tree));
     }
 
     private void replaceFragment(Fragment f) {
         FragmentManager fm = getParentFragmentManager();
         FragmentTransaction t = fm.beginTransaction().replace(R.id.nav_host_fragment, f);
-        t.addToBackStack(null);
         t.commit();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        renderTree();
     }
 }

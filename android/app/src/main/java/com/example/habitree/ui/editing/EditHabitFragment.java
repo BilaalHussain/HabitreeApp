@@ -21,10 +21,15 @@ import com.example.habitree.R;
 import com.example.habitree.api.HabitApi;
 import com.example.habitree.model.DailyHabit;
 import com.example.habitree.model.HabitModel;
+import com.example.habitree.model.TagModel;
 import com.example.habitree.model.WeeklyHabit;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
@@ -62,8 +67,7 @@ public class EditHabitFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_edit_habit, container, false);
         final TextView habitName = root.findViewById(R.id.habit_name);
         final Spinner categorySpinner = root.findViewById(R.id.category_spinner);
-        final Spinner frequencySpinner = root.findViewById(R.id.frequency_spinner);
-        final Spinner targetTypeSpinner = root.findViewById(R.id.target_type_spinner);
+        final Spinner habitTypeSpinner = root.findViewById(R.id.habit_type_spinner);
         final EditText repeatsInput = root.findViewById(R.id.repeats_input);
         final TextView repeatsText = root.findViewById(R.id.repeats_label);
 
@@ -71,7 +75,7 @@ public class EditHabitFragment extends Fragment {
         if (h instanceof WeeklyHabit) {
             repeatsInput.setVisibility(View.VISIBLE);
             repeatsText.setVisibility(View.VISIBLE);
-            repeatsInput.setText(((WeeklyHabit) h).target);
+            repeatsInput.setText(String.valueOf(((WeeklyHabit) h).target));
         }
 
         // set the category spinner to contain a list of alll the current categories
@@ -84,32 +88,27 @@ public class EditHabitFragment extends Fragment {
                 categories
         );
 
-        ArrayAdapter<CharSequence> frequencyAdapter = ArrayAdapter.createFromResource(
+        ArrayAdapter<CharSequence> habitTypesAdapter = ArrayAdapter.createFromResource(
                 getContext(),
-                R.array.frequencies_array,
-                android.R.layout.simple_spinner_item
-        );
-
-        ArrayAdapter<CharSequence> targetTypesAdapter = ArrayAdapter.createFromResource(
-                getContext(),
-                R.array.target_types,
+                R.array.habit_types,
                 android.R.layout.simple_spinner_item
         );
 
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        frequencyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        targetTypesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        habitTypesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         categorySpinner.setAdapter(categoryAdapter);
-        targetTypeSpinner.setAdapter(targetTypesAdapter);
-        frequencySpinner.setAdapter(frequencyAdapter);
-        String[] targetTypes = getResources().getStringArray(R.array.target_types);
+        habitTypeSpinner.setAdapter(habitTypesAdapter);
+        String[] habitTypes = getResources().getStringArray(R.array.habit_types);
 
-        targetTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        categorySpinner.setSelection(h.category.getIndex());
+        habitTypeSpinner.setSelection(h instanceof DailyHabit ? 0 : 1);
+
+        habitTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 // it is binary
-                if (adapterView.getItemAtPosition(i).toString().equals(targetTypes[0])) {
+                if (adapterView.getItemAtPosition(i).toString().equals(habitTypes[0])) {
                     repeatsInput.setVisibility(View.GONE);
                     repeatsText.setVisibility(View.GONE);
                 } else {
@@ -129,20 +128,22 @@ public class EditHabitFragment extends Fragment {
         Button button_save = (Button) root.findViewById(R.id.save_habit_button);
         button_save.setOnClickListener(v -> {
             try {
-                // it is binary
-//                if (targetTypeSpinner.getSelectedItem().toString().equals(targetTypes[0])){
-//                     = new BinaryTarget();
-//                } else {
-//                    newTarget = new IntegerTarget(
-//                            Integer.parseInt(repeatsInput.getText().toString()), // target
-//                            0   // current
-//                    );
-//                }
-                HabitModel.Category selectedCategory = HabitModel.Category.ACADEMIC;
+                HabitModel.Category selectedCategory = HabitModel.stringToCategory(
+                        categorySpinner.getSelectedItem().toString()
+                );
+                int targetAmount;
+                if (habitTypeSpinner.getSelectedItem().equals("Daily")) {
+                    targetAmount = 0;
+                } else {
+                    targetAmount = Integer.parseInt(repeatsInput.getText().toString());
+                }
+
                 onSave(
-                        h,
+                        h.id,
                         habitName.getText().toString(),
-                        selectedCategory
+                        selectedCategory,
+                        new ArrayList<>(),
+                        targetAmount
                 );
                 getParentFragmentManager().popBackStack();
             }
@@ -171,22 +172,24 @@ public class EditHabitFragment extends Fragment {
 //        });
 
         Button button_remove = (Button) root.findViewById(R.id.delete_habit_button);
-        button_remove.setOnClickListener(v -> onRemove(h));
+        button_remove.setOnClickListener(v -> {
+            onRemove(h);
+            getParentFragmentManager().popBackStack();
+        });
         return root;
     }
 
     private void onSave(
-            HabitModel h,
+            UUID habitId,
             String habitName,
-            HabitModel.Category category
+            HabitModel.Category category,
+            List<TagModel> tags,
+            int targetAmount
     ) {
-        h.name = habitName;
-        h.category = category;
-        Log.d("EditSave", h.toString());
         if (isCreating) {
-            habitApi.createHabit(h);
+            habitApi.createHabit(habitId, habitName, category, tags, targetAmount);
         } else {
-            habitApi.updateHabit(h);
+            habitApi.updateHabit(habitId, habitName, category, tags, targetAmount);
         }
     }
     private void onComplete(HabitModel h) {
@@ -194,6 +197,6 @@ public class EditHabitFragment extends Fragment {
     }
     private void onRemove(HabitModel h) {
         Log.d("EditRemove", h.toString());
-        Toast.makeText(getContext(), "Not implemented", Toast.LENGTH_SHORT).show();
+        habitApi.deleteHabit(h.id);
     }
 }

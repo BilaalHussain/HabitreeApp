@@ -9,7 +9,10 @@ import com.example.habitree.database.HabitContract;
 import com.example.habitree.database.HabitDbHelper;
 import com.example.habitree.model.DailyHabit;
 import com.example.habitree.model.HabitModel;
+import com.example.habitree.model.TagModel;
 import com.example.habitree.model.WeeklyHabit;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -17,13 +20,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 public class HabitApi {
     HabitDbHelper dbHelper;
+    Gson gson = new Gson();
 
     public HabitApi(Context context) {
         synchronized (HabitApi.class) {
@@ -31,20 +37,7 @@ public class HabitApi {
         }
     }
 
-    public void initializeDatabase() {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(HabitContract.HabitEntry.COLUMN_NAME_ID, UUID.randomUUID().toString());
-        values.put(HabitContract.HabitEntry.COLUMN_NAME_CATEGORY, HabitModel.Category.ACADEMIC.toString());
-        values.put(HabitContract.HabitEntry.COLUMN_NAME_NAME, "my habit name");
-        values.put(HabitContract.HabitEntry.COLUMN_NAME_DAYS_COMPLETED, new ArrayList<>().toString());
-        values.put(HabitContract.HabitEntry.COLUMN_NAME_TYPE, 0);
-        values.put(HabitContract.HabitEntry.COLUMN_NAME_TAGS, new ArrayList<>().toString());
-
-        long newRowId = db.insert(HabitContract.HabitEntry.TABLE_NAME, null, values);
-    }
-
-    private List<HabitModel> loadHabitsFromDisk(Context context) {
+    private List<HabitModel> loadHabitsFromDisk() {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         String[] projection = {
                 HabitContract.HabitEntry.COLUMN_NAME_ID,
@@ -75,23 +68,30 @@ public class HabitApi {
             int type = cursor.getInt(cursor.getColumnIndexOrThrow(HabitContract.HabitEntry.COLUMN_NAME_TYPE));
 
             HabitModel habit;
+            Type dateListType = new TypeToken<ArrayList<Date>>(){}.getType();
+            List<Date> daysCompleted = gson.fromJson(sDaysCompleted, dateListType);
+
+            Type tagListType = new TypeToken<ArrayList<TagModel>>(){}.getType();
+            List<TagModel> tags = gson.fromJson(sTag, tagListType);
+
+            HabitModel.Category category = HabitModel.stringToCategory(sCategory);
             // its a daily habit
             if (type == 0) {
                 habit = new DailyHabit(
                         UUID.fromString(habitId),
                         sName,
-                        HabitModel.Category.ACADEMIC,
-                        new ArrayList<>(), //TODO
-                        new ArrayList<>() //TODO
+                        category,
+                        daysCompleted, //TODO
+                        tags //TODO
                 );
             } else {
                 //its a weekly habit
                 habit = new WeeklyHabit(
                         UUID.fromString(habitId),
                         sName,
-                        HabitModel.Category.ACADEMIC,
-                        new ArrayList<>(), //TODO
-                        new ArrayList<>(), //TODO
+                        category,
+                        daysCompleted, //TODO
+                        tags, //TODO
                         type
                 );
             }
@@ -101,39 +101,43 @@ public class HabitApi {
         return habits;
     }
 
-    private void saveNewHabitToDisk(HabitModel habit) {
+    private void saveNewHabitToDisk(
+            UUID habitId,
+            String habitName,
+            HabitModel.Category category,
+            List<TagModel> tags,
+            int targetAmount
+    ) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(HabitContract.HabitEntry.COLUMN_NAME_ID, habit.id.toString());
-        values.put(HabitContract.HabitEntry.COLUMN_NAME_CATEGORY, habit.category.toString());
-        values.put(HabitContract.HabitEntry.COLUMN_NAME_NAME, habit.name);
-        values.put(HabitContract.HabitEntry.COLUMN_NAME_DAYS_COMPLETED, new ArrayList<>().toString());
-        if (habit instanceof WeeklyHabit) {
-            values.put(HabitContract.HabitEntry.COLUMN_NAME_TYPE, ((WeeklyHabit) habit).target );
-        } else {
-            values.put(HabitContract.HabitEntry.COLUMN_NAME_TYPE, 0);
-        }
-        values.put(HabitContract.HabitEntry.COLUMN_NAME_TAGS, new ArrayList<>().toString());
+        values.put(HabitContract.HabitEntry.COLUMN_NAME_ID, habitId.toString());
+        values.put(HabitContract.HabitEntry.COLUMN_NAME_CATEGORY, category.toString());
+        values.put(HabitContract.HabitEntry.COLUMN_NAME_NAME, habitName);
+        values.put(HabitContract.HabitEntry.COLUMN_NAME_TYPE, targetAmount);
+        values.put(HabitContract.HabitEntry.COLUMN_NAME_DAYS_COMPLETED, gson.toJson(new ArrayList<>()));
+        values.put(HabitContract.HabitEntry.COLUMN_NAME_TAGS, gson.toJson(tags));
 
         long newRowId = db.insert(HabitContract.HabitEntry.TABLE_NAME, null, values);
     }
 
-    private void saveHabitToDisk(HabitModel habit) {
+    private void saveHabitToDisk(
+            UUID habitId,
+            String habitName,
+            HabitModel.Category category,
+            List<TagModel> tags,
+            int targetAmount
+    ) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         String selection = HabitContract.HabitEntry.COLUMN_NAME_ID + "=?";
-        String[] selectionArgs = { habit.id.toString() };
+        String[] selectionArgs = { habitId.toString() };
 
         ContentValues values = new ContentValues();
-        values.put(HabitContract.HabitEntry.COLUMN_NAME_CATEGORY, habit.category.toString());
-        values.put(HabitContract.HabitEntry.COLUMN_NAME_NAME, habit.name);
-        values.put(HabitContract.HabitEntry.COLUMN_NAME_DAYS_COMPLETED, new ArrayList<>().toString());
-        if (habit instanceof WeeklyHabit) {
-            values.put(HabitContract.HabitEntry.COLUMN_NAME_TYPE, ((WeeklyHabit) habit).target );
-        } else {
-            values.put(HabitContract.HabitEntry.COLUMN_NAME_TYPE, 0);
-        }
-        values.put(HabitContract.HabitEntry.COLUMN_NAME_TAGS, new ArrayList<>().toString());
+        values.put(HabitContract.HabitEntry.COLUMN_NAME_ID, habitId.toString());
+        values.put(HabitContract.HabitEntry.COLUMN_NAME_CATEGORY, category.toString());
+        values.put(HabitContract.HabitEntry.COLUMN_NAME_NAME, habitName);
+        values.put(HabitContract.HabitEntry.COLUMN_NAME_TYPE, targetAmount);
+        values.put(HabitContract.HabitEntry.COLUMN_NAME_TAGS, gson.toJson(tags));
 
         long newRowId = db.update(
                 HabitContract.HabitEntry.TABLE_NAME,
@@ -143,21 +147,70 @@ public class HabitApi {
         );
     }
 
-    public void createHabit(HabitModel habit) {
+    private void deleteHabitFromDisk(UUID habitId) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        String selection = HabitContract.HabitEntry.COLUMN_NAME_ID + "=?";
+        String[] selectionArgs = { habitId.toString() };
+
+        int deletedRows = db.delete(HabitContract.HabitEntry.TABLE_NAME, selection, selectionArgs);
+    }
+
+    private void updateHabitDatesCompletedOnDisk(UUID habitId, List<Date> date) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        String selection = HabitContract.HabitEntry.COLUMN_NAME_ID + "=?";
+        String[] selectionArgs = { habitId.toString() };
+
+        ContentValues values = new ContentValues();
+        values.put(HabitContract.HabitEntry.COLUMN_NAME_DAYS_COMPLETED, gson.toJson(date));
+        values.put(HabitContract.HabitEntry.COLUMN_NAME_ID, habitId.toString());
+
+        long newRowId = db.update(
+                HabitContract.HabitEntry.TABLE_NAME,
+                values,
+                selection,
+                selectionArgs
+        );
+    }
+
+    public void createHabit(
+            UUID habitId,
+             String habitName,
+             HabitModel.Category category,
+             List<TagModel> tags,
+             int targetAmount
+    ) {
         synchronized (HabitApi.class) {
-            saveNewHabitToDisk(habit);
+            saveNewHabitToDisk(habitId, habitName, category, tags, targetAmount);
         }
     }
 
-    public List<HabitModel> getAllHabits(Context context) {
+    public List<HabitModel> getAllHabits() {
         synchronized (HabitApi.class) {
-            return loadHabitsFromDisk(context);
+            return loadHabitsFromDisk();
         }
     }
 
-    public void updateHabit(HabitModel habit) {
+    public void updateHabit(
+            UUID habitId,
+            String habitName,
+            HabitModel.Category category,
+            List<TagModel> tags,
+            int targetAmount
+    ) {
         synchronized (HabitApi.class) {
-            saveHabitToDisk(habit);
+            saveHabitToDisk(habitId, habitName, category, tags, targetAmount);
+        }
+    }
+
+    public void deleteHabit(UUID habitId) {
+        synchronized (HabitApi.class) {
+            deleteHabitFromDisk(habitId);
+        }
+    }
+
+    public void updateHabitDatesCompleted(UUID habitId, List<Date> dates) {
+        synchronized (HabitApi.class) {
+            updateHabitDatesCompletedOnDisk(habitId, dates);
         }
     }
 
