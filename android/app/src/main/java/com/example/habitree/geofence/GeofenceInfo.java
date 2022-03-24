@@ -3,10 +3,9 @@ package com.example.habitree.geofence;
 import java.util.function.Function;
 
 public class GeofenceInfo {
-    boolean enabled;
-    float lat, lng, radius;
-    GeofenceInfo(Function<String,Boolean> onComplete,
-                 String id,
+    public boolean enabled;
+    public float lat, lng, radius;
+    public GeofenceInfo(String id,
                  float lat,
                  float lng,
                  float radius // Radius in meters
@@ -14,6 +13,9 @@ public class GeofenceInfo {
         this.lat = lat;
         this.lng = lng;
         this.radius = radius;
+        this.enabled = true;
     }
-
+    public GeofenceInfo() {
+        this.enabled = false;
+    }
 }

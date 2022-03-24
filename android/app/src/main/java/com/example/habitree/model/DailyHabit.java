@@ -14,6 +14,10 @@ public class DailyHabit extends HabitModel {
         super(id, name, category, tags);
     }
 
+    public DailyHabit(UUID id, String name, Category category, List<Date> daysHabitCompleted, List<TagModel> tags) {
+        super(id, name, category, daysHabitCompleted, tags);
+    }
+
     @Override
     float getTreeWeeklyScore(Date startOfWeek) {
         return (float) this.getCompletionStatus(startOfWeek)/7f;
@@ -30,12 +34,17 @@ public class DailyHabit extends HabitModel {
 
     @SuppressLint("NewApi")
     @Override
-    boolean isToDo(Date startOfWeek) {
+    public boolean isToDo(Date startOfWeek) {
         Date currTime = Calendar.getInstance().getTime();
         Instant instant1 = currTime.toInstant()
                 .truncatedTo(ChronoUnit.DAYS);
-        return daysHabitCompleted.stream().anyMatch(day ->
+        return !daysHabitCompleted.stream().anyMatch(day ->
                 instant1.equals(day.toInstant().truncatedTo(ChronoUnit.DAYS))
         );
+    }
+
+    @Override
+    public String getReadableStatusString(Date startOfWeek) {
+        return String.format("%s/%s", getCompletionStatus(startOfWeek), 7);
     }
 }

@@ -13,6 +13,11 @@ public class WeeklyHabit extends HabitModel {
         this.target = target;
     }
 
+    public WeeklyHabit(UUID id, String name, Category category, List<Date> daysHabitCompleted, List<TagModel> tags, int target) {
+        super(id, name, category, daysHabitCompleted, tags);
+        this.target = target;
+    }
+
     public int target;
 
     @Override
@@ -31,11 +36,16 @@ public class WeeklyHabit extends HabitModel {
 
     @SuppressLint("NewApi")
     @Override
-    boolean isToDo(Date startOfWeek) {
+    public boolean isToDo(Date startOfWeek) {
         Date currTime = Calendar.getInstance().getTime();
         int numDaysHabitCompletedInLastWeek = (int) daysHabitCompleted.stream().filter(day ->
                 day.after(startOfWeek) && day.before(currTime)
         ).count();
-        return numDaysHabitCompletedInLastWeek >= target;
+        return numDaysHabitCompletedInLastWeek < target;
+    }
+
+    @Override
+    public String getReadableStatusString(Date startOfWeek) {
+        return String.format("%s/%s", getCompletionStatus(startOfWeek), target);
     }
 }

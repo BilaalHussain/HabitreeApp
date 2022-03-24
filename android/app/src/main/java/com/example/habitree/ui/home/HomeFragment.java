@@ -17,6 +17,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.habitree.R;
+import com.example.habitree.api.HabitApi;
+import com.example.habitree.listener.CheckBoxTapped;
 import com.example.habitree.listener.HabitTapped;
 import com.example.habitree.model.DailyHabit;
 import com.example.habitree.model.HabitModel;
@@ -24,10 +26,10 @@ import com.example.habitree.model.HomeModel;
 import com.example.habitree.presenter.HomePresenter;
 import com.example.habitree.ui.HabitAdapter;
 import com.example.habitree.ui.editing.EditHabitFragment;
-import com.example.habitree.ui.editing.MapsFragment;
 import com.example.habitree.view.AbstractView;
 
 import java.util.ArrayList;
+
 import java.util.OptionalInt;
 import java.util.UUID;
 import java.util.stream.IntStream;
@@ -36,6 +38,7 @@ public class HomeFragment extends Fragment implements AbstractView<HomePresenter
 
     private HomeModel homeModel;
     private HomePresenter presenter;
+    private HabitApi habitApi;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -48,7 +51,8 @@ public class HomeFragment extends Fragment implements AbstractView<HomePresenter
 
         title.setText(R.string.todays_habits);
 
-        setPresenter(new HomePresenter(this));
+        habitApi = new HabitApi(requireContext());
+        setPresenter(new HomePresenter(this, habitApi));
 
         // Note this issue is that this is getting called when we return to the fragment
         //      and for some reason only the habit that was just updated is present
@@ -58,12 +62,36 @@ public class HomeFragment extends Fragment implements AbstractView<HomePresenter
 
         HabitAdapter habitAdapter = new HabitAdapter();
         habitAdapter.setEventListener(event -> {
-            UUID habitId = ((HabitTapped) event).id;
-            OptionalInt index = IntStream.range(0, homeModel.habits.size())
-                    .filter(x -> habitId.equals(homeModel.habits.get(x).id))
-                    .findFirst();
-            if (index.isPresent()) {
-                replaceFragment(EditHabitFragment.newInstance(homeModel.habits.get(index.getAsInt())));
+            if (event instanceof HabitTapped) {
+                UUID habitId = ((HabitTapped) event).id;
+                OptionalInt index = IntStream.range(0, homeModel.habits.size())
+                        .filter(x -> habitId.equals(homeModel.habits.get(x).id))
+                        .findFirst();
+                if (index.isPresent()) {
+                    replaceFragment(EditHabitFragment.newInstance(
+                            homeModel.habits.get(index.getAsInt()),
+                            false
+                    ));
+                }
+            } else if (event instanceof CheckBoxTapped) {
+                UUID habitId = ((CheckBoxTapped) event).id;
+                OptionalInt index = IntStream.range(0, homeModel.habits.size())
+                        .filter(x -> habitId.equals(homeModel.habits.get(x).id))
+                        .findFirst();
+                if (index.isPresent()) {
+                    HabitModel habitToUpdate =  homeModel.habits.get(index.getAsInt());
+
+                    if (habitToUpdate.isToDoToday()) {
+                        habitToUpdate.complete();
+                    } else {
+                        habitToUpdate.uncomplete();
+                    }
+                    habitApi.updateHabitDatesCompleted(
+                            habitToUpdate.id,
+                            habitToUpdate.daysHabitCompleted
+                    );
+                    habitAdapter.setCurrentHabits(homeModel.habits);
+                }
             }
             // TODO edit this event listener to instead navigate to the habit edit page
 //            List<HabitModel> newHabits = presenter.markHabitAsComplete(habit);
@@ -73,15 +101,15 @@ public class HomeFragment extends Fragment implements AbstractView<HomePresenter
         addHabitButton.setOnClickListener(event -> {
             // creates basic habit model
             HabitModel newHabit = new DailyHabit(
-                    UUID.fromString("2f8bd149-1925-4b75-a675-f50b6a268d23"),
+                    UUID.randomUUID(),
                     "",
                     HabitModel.Category.ACADEMIC,
                     new ArrayList<>()
             );
             homeModel.habits.add(newHabit);
 
-            // TODO: uncomment when maps testing done
-            replaceFragment(EditHabitFragment.newInstance(newHabit));
+            replaceFragment(EditHabitFragment.newInstance(newHabit, true));
+
         });
 
         habitList.setAdapter(habitAdapter);
