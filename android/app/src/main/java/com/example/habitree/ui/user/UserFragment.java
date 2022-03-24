@@ -18,6 +18,8 @@ import com.example.habitree.model.ScoreModel;
 import com.example.habitree.model.TreeModel;
 import com.example.habitree.ui.tree.TreeFragment;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -39,7 +41,8 @@ public class UserFragment extends Fragment {
         cal.set(Calendar.SECOND, 0);
         Date startOfWeek = cal.getTime();
         ScoreModel score = new ScoreModel(habits, startOfWeek);
-        TreeModel tree = new TreeModel("Good morning!", score.getTreeUri());
+        DateFormat df = new SimpleDateFormat("MMMM dd, yyyy");
+        TreeModel tree = new TreeModel("Week of " + df.format(startOfWeek), score.getTreeUri());
         replaceFragment(TreeFragment.newInstance(tree));
     }
 

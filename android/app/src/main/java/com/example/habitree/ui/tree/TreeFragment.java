@@ -1,10 +1,10 @@
 package com.example.habitree.ui.tree;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.example.habitree.R;
 import com.example.habitree.model.TreeModel;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -61,11 +62,19 @@ public class TreeFragment extends Fragment {
 
         final TextView title = root.findViewById(R.id.tree_title);
         final ImageView image = root.findViewById(R.id.tree_image);
+        final FloatingActionButton share = root.findViewById(R.id.share_button);
 
         title.setText(tree.title);
         Picasso.get().load(tree.uri.toString())
                 .placeholder(R.drawable.loading)
                 .into(image);
+
+        share.setOnClickListener(v -> {
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_tree) + tree.uri);
+            startActivity(Intent.createChooser(shareIntent, "Share your tree using"));
+        });
 
         return root;
     }
