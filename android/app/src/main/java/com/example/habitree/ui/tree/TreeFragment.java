@@ -1,6 +1,7 @@
 package com.example.habitree.ui.tree;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.core.content.ContextCompat;
@@ -34,6 +35,8 @@ public class TreeFragment extends Fragment {
     private static final String ARG_TREE1 = "tree";
 
     private TreeModel tree;
+    PieChart pieChart;
+    ImageView image;
 
     public TreeFragment() {
         // Required empty public constructor
@@ -67,16 +70,38 @@ public class TreeFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_tree, container, false);
+        if (tree == null) {
+            return root;
+        }
 
         final TextView title = root.findViewById(R.id.tree_title);
-        final ImageView image = root.findViewById(R.id.tree_image);
+        image = root.findViewById(R.id.tree_image);
         final FloatingActionButton share = root.findViewById(R.id.share_button);
-        final PieChart pieChart = root.findViewById(R.id.piechart);
+        pieChart = root.findViewById(R.id.piechart);
 
         // Set the title
         title.setText(tree.title);
 
         // Set data in pie chart
+        updateScorePieChart();
+
+        // Set the tree image
+        URI treeUri = tree.score.getTreeUri();
+        Picasso.get().load(treeUri.toString())
+                .placeholder(R.drawable.loading)
+                .into(image);
+
+        share.setOnClickListener(v -> {
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_tree) + treeUri);
+            startActivity(Intent.createChooser(shareIntent, "Share your tree using"));
+        });
+
+        return root;
+    }
+
+    private void updateScorePieChart() {
         Map<HabitModel.Category, Float> breakdown = tree.score.percentageBreakdown();
         pieChart.addPieSlice(
                 new PieModel(
@@ -103,21 +128,18 @@ public class TreeFragment extends Fragment {
                         HabitModel.Category.WORK.toString(),
                         breakdown.getOrDefault(HabitModel.Category.WORK, 0f),
                         ContextCompat.getColor(getContext(), R.color.work)));
+
+        Float vals = breakdown.values().stream().reduce(Float::sum).orElse(0f);
+        if (vals == 0) {
+            pieChart.addPieSlice(
+                    new PieModel(
+                            HabitModel.Category.WORK.toString(),
+                            1f,
+                            Color.BLACK));
+        }
+
+        pieChart.setUseInnerPadding(false);
         pieChart.startAnimation();
-
-        // Set the tree image
-        URI treeUri = tree.score.getTreeUri();
-        Picasso.get().load(treeUri.toString())
-                .placeholder(R.drawable.loading)
-                .into(image);
-
-        share.setOnClickListener(v -> {
-            Intent shareIntent = new Intent(Intent.ACTION_SEND);
-            shareIntent.setType("text/plain");
-            shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_tree) + treeUri);
-            startActivity(Intent.createChooser(shareIntent, "Share your tree using"));
-        });
-
-        return root;
     }
 }
+

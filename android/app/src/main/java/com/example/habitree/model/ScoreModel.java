@@ -41,7 +41,7 @@ public class ScoreModel {
         }
         Map<HabitModel.Category, Float> breakdown = new HashMap<>();
         for (HabitModel.Category category : scores.keySet()) {
-            breakdown.put(category, scores.get(category)/sum);
+            breakdown.put(category, sum == 0 ? 0 : scores.get(category)/sum);
         }
         return breakdown;
     }
