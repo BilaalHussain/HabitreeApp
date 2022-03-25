@@ -13,4 +13,9 @@
     <color name="yellow">#FFFB29</color>
     <color name="green">#19e326</color>
     <color name="pink">#FF8ABB</color>
+    <color name="academic">#a64253</color>
+    <color name="creative">#4da168</color>
+    <color name="fitness">#48b7d0</color>
+    <color name="self_help">#fca211</color>
+    <color name="work">#5c415d</color>
 </resources>

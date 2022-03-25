@@ -3,6 +3,7 @@ package com.example.habitree.ui.tree;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -12,9 +13,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.habitree.R;
+import com.example.habitree.model.HabitModel;
 import com.example.habitree.model.TreeModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
+
+import org.eazegraph.lib.charts.PieChart;
+import org.eazegraph.lib.models.PieModel;
+
+import java.net.URI;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -63,16 +71,50 @@ public class TreeFragment extends Fragment {
         final TextView title = root.findViewById(R.id.tree_title);
         final ImageView image = root.findViewById(R.id.tree_image);
         final FloatingActionButton share = root.findViewById(R.id.share_button);
+        final PieChart pieChart = root.findViewById(R.id.piechart);
 
+        // Set the title
         title.setText(tree.title);
-        Picasso.get().load(tree.uri.toString())
+
+        // Set data in pie chart
+        Map<HabitModel.Category, Float> breakdown = tree.score.percentageBreakdown();
+        pieChart.addPieSlice(
+                new PieModel(
+                        HabitModel.Category.ACADEMIC.toString(),
+                        breakdown.getOrDefault(HabitModel.Category.ACADEMIC, 0f),
+                        ContextCompat.getColor(getContext(), R.color.academic)));
+        pieChart.addPieSlice(
+                new PieModel(
+                        HabitModel.Category.CREATIVE.toString(),
+                        breakdown.getOrDefault(HabitModel.Category.CREATIVE, 0f),
+                        ContextCompat.getColor(getContext(), R.color.creative)));
+        pieChart.addPieSlice(
+                new PieModel(
+                        HabitModel.Category.FITNESS.toString(),
+                        breakdown.getOrDefault(HabitModel.Category.FITNESS, 0f),
+                        ContextCompat.getColor(getContext(), R.color.fitness)));
+        pieChart.addPieSlice(
+                new PieModel(
+                        HabitModel.Category.SELF_HELP.toString(),
+                        breakdown.getOrDefault(HabitModel.Category.SELF_HELP, 0f),
+                        ContextCompat.getColor(getContext(), R.color.self_help)));
+        pieChart.addPieSlice(
+                new PieModel(
+                        HabitModel.Category.WORK.toString(),
+                        breakdown.getOrDefault(HabitModel.Category.WORK, 0f),
+                        ContextCompat.getColor(getContext(), R.color.work)));
+        pieChart.startAnimation();
+
+        // Set the tree image
+        URI treeUri = tree.score.getTreeUri();
+        Picasso.get().load(treeUri.toString())
                 .placeholder(R.drawable.loading)
                 .into(image);
 
         share.setOnClickListener(v -> {
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
             shareIntent.setType("text/plain");
-            shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_tree) + tree.uri);
+            shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_tree) + treeUri);
             startActivity(Intent.createChooser(shareIntent, "Share your tree using"));
         });
 

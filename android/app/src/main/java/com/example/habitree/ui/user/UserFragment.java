@@ -42,7 +42,7 @@ public class UserFragment extends Fragment {
         Date startOfWeek = cal.getTime();
         ScoreModel score = new ScoreModel(habits, startOfWeek);
         DateFormat df = new SimpleDateFormat("MMMM dd, yyyy");
-        TreeModel tree = new TreeModel("Week of " + df.format(startOfWeek), score.getTreeUri());
+        TreeModel tree = new TreeModel("Week of " + df.format(startOfWeek), score);
         replaceFragment(TreeFragment.newInstance(tree));
     }
 

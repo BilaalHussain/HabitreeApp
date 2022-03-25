@@ -5,10 +5,10 @@ import java.net.URI;
 
 public class TreeModel implements Serializable {
     public String title;
-    public URI uri;
+    public ScoreModel score;
 
-    public TreeModel(String title, URI uri) {
+    public TreeModel(String title, ScoreModel score) {
         this.title = title;
-        this.uri = uri;
+        this.score = score;
     }
 }

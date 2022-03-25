@@ -33,4 +33,16 @@ public class ScoreModel {
                 0 // TODO: Use user ID as seed
         ));
     }
+
+    public Map<HabitModel.Category, Float> percentageBreakdown() {
+        float sum = 0f;
+        for (HabitModel.Category category : scores.keySet()) {
+            sum += scores.get(category);
+        }
+        Map<HabitModel.Category, Float> breakdown = new HashMap<>();
+        for (HabitModel.Category category : scores.keySet()) {
+            breakdown.put(category, scores.get(category)/sum);
+        }
+        return breakdown;
+    }
 }
