@@ -37,7 +37,6 @@ function generateScreenShot(query: ParsedQs): Promise<Buffer> {
       await page.goto(`https://cs446-habitree.web.app/?red=${query.red}&green=${query.green}&blue=${query.blue}&orange=${query.orange}&purple=${query.purple}&seed=${query.seed}`, {
         waitUntil: "networkidle2",
       });
-      await page.waitFor(500);
       const imageBuffer: any = await page.screenshot({fullPage: true});
       await browser.close();
 

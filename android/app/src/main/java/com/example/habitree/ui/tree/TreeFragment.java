@@ -1,5 +1,7 @@
 package com.example.habitree.ui.tree;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -89,7 +91,28 @@ public class TreeFragment extends Fragment {
         URI treeUri = tree.score.getTreeUri();
         Picasso.get().load(treeUri.toString())
                 .placeholder(R.drawable.loading)
-                .into(image);
+                .into(image, new com.squareup.picasso.Callback() {
+                    @Override
+                    public void onSuccess() {
+                        image.setTranslationY(300f);
+                        ObjectAnimator scaleDownX = ObjectAnimator.ofFloat(image, "scaleX", 1.3f);
+                        ObjectAnimator scaleDownY = ObjectAnimator.ofFloat(image, "scaleY", 1.3f);
+                        ObjectAnimator translateY = ObjectAnimator.ofFloat(image, "translationY", 0f);
+                        scaleDownX.setDuration(1000);
+                        scaleDownY.setDuration(1000);
+                        translateY.setDuration(1000);
+
+                        AnimatorSet scaleDown = new AnimatorSet();
+                        scaleDown.play(scaleDownX).with(scaleDownY).with(translateY);
+
+                        scaleDown.start();
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+
+                    }
+                });
 
         share.setOnClickListener(v -> {
             Intent shareIntent = new Intent(Intent.ACTION_SEND);

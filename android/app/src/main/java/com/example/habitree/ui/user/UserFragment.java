@@ -63,7 +63,7 @@ public class UserFragment extends Fragment {
         selectedWeek = newWeek;
         renderTree(selectedWeek);
 
-        nextBtn.setEnabled(selectedWeek != startOfCurrentWeek);
+        nextBtn.setEnabled(selectedWeek.getTime() != startOfCurrentWeek.getTime());
     }
 
     private void renderTree(Date startOfWeek) {
