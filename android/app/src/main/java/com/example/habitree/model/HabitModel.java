@@ -76,6 +76,7 @@ public abstract class HabitModel implements Serializable {
         this.category = category;
         this.tags = tags;
         this.daysHabitCompleted = daysHabitCompleted;
+        this.geofenceInfo = geofenceInfo;
     }
 
     public void complete() {

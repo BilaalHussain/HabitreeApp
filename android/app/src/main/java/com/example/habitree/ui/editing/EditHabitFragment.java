@@ -72,22 +72,6 @@ public class EditHabitFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getParentFragmentManager()
-                .setFragmentResultListener(GEOFENCE_FRAGMENT_REQUEST_KEY, this, (requestKey, bundle) -> {
-                    switch(bundle.getString(GEOFENCE_RESULT_TYPE_KEY)) {
-                        case GEOFENCE_CREATE:
-                            String sGeofenceInfo = bundle.getString(GEOFENCE_CREATE_DATA);
-                            this.h.geofenceInfo = gson.fromJson(sGeofenceInfo, GeofenceInfo.class);
-                            break;
-                        case GEOFENCE_DELETE:
-                            this.h.geofenceInfo = new GeofenceInfo(this.h.id.toString());
-                            this.h.geofenceInfo.enabled = false;
-                            break;
-                        case GEOFENCE_CANCEL:
-                            break;
-                    }
-
-                });
     }
 
     @SuppressLint("NewApi")
@@ -274,6 +258,24 @@ public class EditHabitFragment extends Fragment {
             onRemove(h);
             getParentFragmentManager().popBackStack();
         });
+
+        getParentFragmentManager()
+                .setFragmentResultListener(GEOFENCE_FRAGMENT_REQUEST_KEY, this, (requestKey, bundle) -> {
+                    switch(bundle.getString(GEOFENCE_RESULT_TYPE_KEY)) {
+                        case GEOFENCE_CREATE:
+                            String sGeofenceInfo = bundle.getString(GEOFENCE_CREATE_DATA);
+                            this.h.geofenceInfo = gson.fromJson(sGeofenceInfo, GeofenceInfo.class);
+                            manageGeofence.setText("Edit");
+                            break;
+                        case GEOFENCE_DELETE:
+                            this.h.geofenceInfo = new GeofenceInfo(this.h.id.toString());
+                            this.h.geofenceInfo.enabled = false;
+                            break;
+                        case GEOFENCE_CANCEL:
+                            break;
+                    }
+
+                });
         return root;
     }
 
