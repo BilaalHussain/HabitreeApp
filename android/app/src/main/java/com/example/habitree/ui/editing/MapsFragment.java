@@ -1,13 +1,10 @@
 package com.example.habitree.ui.editing;
 
-import static androidx.core.content.ContextCompat.getSystemService;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
+import static com.example.habitree.ui.editing.EditHabitFragment.GEOFENCE_CREATE;
+import static com.example.habitree.ui.editing.EditHabitFragment.GEOFENCE_CREATE_DATA;
+import static com.example.habitree.ui.editing.EditHabitFragment.GEOFENCE_FRAGMENT_REQUEST_KEY;
+import static com.example.habitree.ui.editing.EditHabitFragment.GEOFENCE_RESULT_TYPE_KEY;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -18,18 +15,23 @@ import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.VibrationEffect;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.example.habitree.R;
-import android.os.Vibrator;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+
+import com.example.habitree.R;
 import com.example.habitree.geofence.GeofenceHelper;
+import com.example.habitree.geofence.GeofenceInfo;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
@@ -41,8 +43,9 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.Gson;
 
-import java.util.Arrays;
+
 import java.util.Collections;
 
 
@@ -54,10 +57,11 @@ public class MapsFragment extends Fragment {
 
     private LatLng center;
     private String id;
-    private float radius;
+    private double radius;
+    private boolean enabled;
     private GoogleMap gMap;
+    private Gson gson = new Gson();
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
-
         /**
          * Manipulates the map once available.
          * This callback is triggered when the map is ready to be used.
@@ -76,6 +80,16 @@ public class MapsFragment extends Fragment {
             final LatLng mcBuilding = new LatLng(43.4720, -80.544);
             gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mcBuilding, 16));
 
+            if(enabled) {
+                gMap.addMarker(new MarkerOptions().position(center));
+                gMap.addCircle(new CircleOptions()
+                        .center(center)
+                        .radius(radius)
+                        .strokeColor(Color.argb(255,0,255,0))
+                        .strokeWidth(4f)
+                        .fillColor(Color.argb(81, 0,255,0))
+                );
+            }
 
             gMap.setOnMapLongClickListener(latLng -> {
                 center = latLng;
@@ -155,27 +169,36 @@ public class MapsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
     }
-    private MapsFragment(String ID, LatLng center, float radius) {
-        id = ID;
-        this.center = center;
-        this.radius = radius;
-    }
-    private MapsFragment(String ID) {
-        id = ID;
-    }
-    public static MapsFragment newInstance(String ID, LatLng center, float radius) {
-        MapsFragment fragment = new MapsFragment(ID, center, radius);
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }
-    public static MapsFragment newInstance(String ID) {
-        MapsFragment fragment = new MapsFragment(ID);
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }
+//    public MapsFragment(String ID, GeofenceInfo geofenceInfo) {
+//        id = ID;
+//        if (geofenceInfo == null) {
+//            geofenceInfo = new GeofenceInfo(ID);
+//        }
+//        this.center = new LatLng(geofenceInfo.lat, geofenceInfo.lng);
+//        this.radius = geofenceInfo.radius;
+//        this.enabled = geofenceInfo.enabled;
+//    }
+//    public MapsFragment(String ID) {
+//        id = ID;
+//        this.enabled = false;
+//    }
+//    public static MapsFragment newInstance(String ID, GeofenceInfo geofenceInfo) {
+//        MapsFragment fragment = new MapsFragment(ID, geofenceInfo);
+//        Bundle args = new Bundle();
+//        fragment.setArguments(args);
+//        return fragment;
+//    }
+//    public static MapsFragment newInstance(String ID) {
+//        MapsFragment fragment = new MapsFragment(ID);
+//        Bundle args = new Bundle();
+//        fragment.setArguments(args);
+//        return fragment;
+//    }
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -184,11 +207,29 @@ public class MapsFragment extends Fragment {
         Log.d("MAPS", "OnCreateView called");
         View root = inflater.inflate(R.layout.fragment_maps, container, false);
 
+        Bundle b = getArguments();
+
+        Log.w(TAG, "For some reason, the saved instance state (bundle) is null>?");
+        String uuid = b.getString("uuid");
+
+        GeofenceInfo geofenceInfo =
+                gson.fromJson(b.getString("geofence"),
+                        GeofenceInfo.class);
+
+        id = uuid;
+        if (geofenceInfo == null) {
+            geofenceInfo = new GeofenceInfo(uuid);
+        }
+        this.center = new LatLng(geofenceInfo.lat, geofenceInfo.lng);
+        this.radius = geofenceInfo.radius;
+        this.enabled = geofenceInfo.enabled;
+
+
         final Button confirmFence = root.findViewById(R.id.confirm_geofence_button);
         final Button cancelFence = root.findViewById(R.id.cancel_geofence_button);
         final Button eraseFence = root.findViewById(R.id.erase_geofence_button);
         Context ctx = requireContext();
-        confirmFence.setOnClickListener(x -> createFence(ctx));
+        confirmFence.setOnClickListener(x -> createFence(ctx, getParentFragmentManager()));
         cancelFence.setOnClickListener(x -> cancelFence(ctx));
         eraseFence.setOnClickListener(x -> deleteFence(ctx));
 
@@ -209,7 +250,7 @@ public class MapsFragment extends Fragment {
     }
 
     @SuppressLint("MissingPermission")
-    private void createFence(Context c) {
+    private void createFence(Context c, FragmentManager f) {
         Geofence fence = geofenceHelper.getGeofence(id,
                 center,
                 radius,
@@ -217,8 +258,22 @@ public class MapsFragment extends Fragment {
         GeofencingRequest request = geofenceHelper.getGeofencingRequest(fence);
         PendingIntent intent = geofenceHelper.getPendingIntent();
         getUserPermission();
+
+
         geofencingClient.addGeofences(request, intent)
-                .addOnSuccessListener(x -> {Toast.makeText(c, "Geofence added",Toast.LENGTH_SHORT).show(); Log.d(TAG, "Add success id:" + id );})
+                .addOnSuccessListener(x -> {
+                    Toast.makeText(c, "Geofence added",Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "Add success id:" + id );
+
+                    Bundle bundle = new Bundle();
+                    bundle.putString(GEOFENCE_RESULT_TYPE_KEY, GEOFENCE_CREATE);
+                    bundle.putString(GEOFENCE_CREATE_DATA, gson.toJson(
+                            new GeofenceInfo(id, center.latitude, center.longitude, radius)
+                    ));
+                    f.setFragmentResult(
+                            GEOFENCE_FRAGMENT_REQUEST_KEY,
+                            bundle);
+                })
                 .addOnFailureListener(e -> {
                     Toast.makeText(c, geofenceHelper.getErrorString(e), Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "Add failure id:" + id + " msg: " + geofenceHelper.getErrorString(e));
@@ -226,7 +281,9 @@ public class MapsFragment extends Fragment {
 
         getParentFragmentManager().popBackStack();
     }
-    private void cancelFence(Context c) {       getParentFragmentManager().popBackStack();}
+    private void cancelFence(Context c) {
+        getParentFragmentManager().popBackStack();
+    }
     private void deleteFence(Context c) {
         gMap.clear();
         geofencingClient

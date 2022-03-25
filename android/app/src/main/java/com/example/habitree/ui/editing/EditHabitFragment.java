@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.example.habitree.R;
 import com.example.habitree.api.HabitApi;
+import com.example.habitree.geofence.GeofenceInfo;
 import com.example.habitree.listener.DeleteTagTapped;
 import com.example.habitree.listener.ToggleIsEditing;
 import com.example.habitree.listener.UpdateTag;
@@ -29,6 +30,7 @@ import com.example.habitree.model.HabitModel;
 import com.example.habitree.model.TagModel;
 import com.example.habitree.model.WeeklyHabit;
 import com.example.habitree.ui.TagAdapter;
+import com.google.gson.Gson;
 
 import java.util.List;
 import java.util.UUID;
@@ -45,6 +47,16 @@ public class EditHabitFragment extends Fragment {
     private final HabitModel h;
     private final Boolean isCreating;
     private HabitApi habitApi;
+    Gson gson = new Gson();
+
+    public static String GEOFENCE_FRAGMENT_REQUEST_KEY = "GEOFENCE_FRAGMENT_REQUEST_KEY";
+
+    public static String GEOFENCE_RESULT_TYPE_KEY = "GEOFENCE_RESULT_TYPE_KEY";
+    public static final String GEOFENCE_CREATE = "GEOFENCE_CREATE";
+    public static final String GEOFENCE_DELETE = "GEOFENCE_DELETE";
+    public static final String GEOFENCE_CANCEL = "GEOFENCE_CANCEL";
+
+    public static final String GEOFENCE_CREATE_DATA = "GEOFENCE_CREATE_DATA";
 
     private EditHabitFragment(HabitModel h, Boolean isCreating) {
         this.h = h;
@@ -60,6 +72,22 @@ public class EditHabitFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getParentFragmentManager()
+                .setFragmentResultListener(GEOFENCE_FRAGMENT_REQUEST_KEY, this, (requestKey, bundle) -> {
+                    switch(bundle.getString(GEOFENCE_RESULT_TYPE_KEY)) {
+                        case GEOFENCE_CREATE:
+                            String sGeofenceInfo = bundle.getString(GEOFENCE_CREATE_DATA);
+                            this.h.geofenceInfo = gson.fromJson(sGeofenceInfo, GeofenceInfo.class);
+                            break;
+                        case GEOFENCE_DELETE:
+                            this.h.geofenceInfo = new GeofenceInfo(this.h.id.toString());
+                            this.h.geofenceInfo.enabled = false;
+                            break;
+                        case GEOFENCE_CANCEL:
+                            break;
+                    }
+
+                });
     }
 
     @SuppressLint("NewApi")
@@ -207,7 +235,8 @@ public class EditHabitFragment extends Fragment {
                             habitName.getText().toString(),
                             selectedCategory,
                             newTags,
-                            targetAmount
+                            targetAmount,
+                            h.geofenceInfo
                     );
                     getParentFragmentManager().popBackStack();
                 }
@@ -221,15 +250,23 @@ public class EditHabitFragment extends Fragment {
 
 
         final Button manageGeofence = root.findViewById(R.id.geofence_button);
-        manageGeofence.setText(h.geofenceInfo.enabled ? "Edit" : "Create");
+        manageGeofence.setText(h.geofenceInfo != null && h.geofenceInfo.enabled ? "Edit" : "Create");
         manageGeofence.setOnClickListener(
                 view ->
+                {
+                    Bundle b = new Bundle();
+                    b.putString("uuid", h.id.toString());
+                    b.putString("geofence", gson.toJson(h.geofenceInfo));
+
                     getParentFragmentManager()
                             .beginTransaction()
-                            .replace(R.id.nav_host_fragment,
-                                    MapsFragment.newInstance(h.id.toString()))
+                            .replace(
+                                    R.id.nav_host_fragment,
+                                    MapsFragment.class, b)
                             .addToBackStack(null)
-                            .commit()
+                            .commit();
+
+                }
         );
 
         Button button_remove = root.findViewById(R.id.delete_habit_button);
@@ -245,12 +282,13 @@ public class EditHabitFragment extends Fragment {
             String habitName,
             HabitModel.Category category,
             List<TagModel> tags,
-            int targetAmount
+            int targetAmount,
+            GeofenceInfo geoFenceInfo
     ) {
         if (isCreating) {
-            habitApi.createHabit(habitId, habitName, category, tags, targetAmount);
+            habitApi.createHabit(habitId, habitName, category, tags, targetAmount, geoFenceInfo);
         } else {
-            habitApi.updateHabit(habitId, habitName, category, tags, targetAmount);
+            habitApi.updateHabit(habitId, habitName, category, tags, targetAmount, geoFenceInfo);
         }
     }
     private void onComplete(HabitModel h) {

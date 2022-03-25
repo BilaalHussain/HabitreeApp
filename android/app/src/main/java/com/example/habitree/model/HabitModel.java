@@ -52,7 +52,8 @@ public abstract class HabitModel implements Serializable {
             UUID id,
             String name,
             Category category,
-            List<TagModel> tags
+            List<TagModel> tags,
+            GeofenceInfo geofenceInfo
     ) {
         this.id = id;
         this.name = name;
@@ -67,7 +68,8 @@ public abstract class HabitModel implements Serializable {
             String name,
             Category category,
             List<Date> daysHabitCompleted,
-            List<TagModel> tags
+            List<TagModel> tags,
+            GeofenceInfo geofenceInfo
     ) {
         this.id = id;
         this.name = name;

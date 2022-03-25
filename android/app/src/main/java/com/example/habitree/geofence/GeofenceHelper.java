@@ -27,9 +27,9 @@ public class GeofenceHelper extends ContextWrapper {
                 .build();
     }
 
-    public Geofence getGeofence(String ID, LatLng latLng, float radius, int transitionTypes) {
+    public Geofence getGeofence(String ID, LatLng latLng, double radius, int transitionTypes) {
         return new Geofence.Builder()
-                .setCircularRegion(latLng.latitude, latLng.longitude, radius)
+                .setCircularRegion(latLng.latitude, latLng.longitude, (float)radius)
                 .setRequestId(ID)
                 .setTransitionTypes(transitionTypes)
                 .setLoiteringDelay(5000)
