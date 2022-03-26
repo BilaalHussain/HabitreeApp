@@ -13,6 +13,7 @@ public final class HabitContract {
         public static final String COLUMN_NAME_CATEGORY = "category";
         public static final String COLUMN_NAME_DAYS_COMPLETED = "days_completed";
         public static final String COLUMN_NAME_TAGS = "tags";
+        public static final String COLUMN_NAME_GEOFENCE_INFO = "geofence";
         public static final String COLUMN_NAME_TYPE = "type"; // daily -> 0/ weekly -> target # of days
     }
 }

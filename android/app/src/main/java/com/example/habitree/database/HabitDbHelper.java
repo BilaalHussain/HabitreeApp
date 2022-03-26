@@ -20,6 +20,7 @@ public class HabitDbHelper extends SQLiteOpenHelper {
                     HabitContract.HabitEntry.COLUMN_NAME_CATEGORY + " TEXT," +
                     HabitContract.HabitEntry.COLUMN_NAME_DAYS_COMPLETED + " TEXT," +
                     HabitContract.HabitEntry.COLUMN_NAME_TYPE + " INT," +
+                    HabitContract.HabitEntry.COLUMN_NAME_GEOFENCE_INFO + " TEXT," +
                     HabitContract.HabitEntry.COLUMN_NAME_TAGS + " TEXT)";
 
     private static final String SQL_DELETE_ENTRIES =

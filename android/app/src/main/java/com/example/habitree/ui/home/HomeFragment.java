@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.habitree.R;
 import com.example.habitree.api.HabitApi;
+import com.example.habitree.geofence.GeofenceInfo;
 import com.example.habitree.listener.CheckBoxTapped;
 import com.example.habitree.listener.HabitTapped;
 import com.example.habitree.model.DailyHabit;
@@ -29,7 +30,7 @@ import com.example.habitree.ui.editing.EditHabitFragment;
 import com.example.habitree.view.AbstractView;
 
 import java.util.ArrayList;
-import java.util.Calendar;
+
 import java.util.OptionalInt;
 import java.util.UUID;
 import java.util.stream.IntStream;
@@ -100,14 +101,18 @@ public class HomeFragment extends Fragment implements AbstractView<HomePresenter
 
         addHabitButton.setOnClickListener(event -> {
             // creates basic habit model
+            UUID uuid = UUID.randomUUID();
             HabitModel newHabit = new DailyHabit(
-                    UUID.randomUUID(),
+                    uuid,
                     "",
                     HabitModel.Category.ACADEMIC,
-                    new ArrayList<>()
+                    new ArrayList<>(),
+                    new GeofenceInfo(uuid.toString())
             );
             homeModel.habits.add(newHabit);
+
             replaceFragment(EditHabitFragment.newInstance(newHabit, true));
+
         });
 
         habitList.setAdapter(habitAdapter);

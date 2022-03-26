@@ -2,6 +2,7 @@ package com.example.habitree.model;
 
 import android.annotation.SuppressLint;
 
+import com.example.habitree.geofence.GeofenceInfo;
 import com.example.habitree.helpers.DateHelpers;
 
 import java.time.Instant;
@@ -12,12 +13,12 @@ import java.util.List;
 import java.util.UUID;
 
 public class DailyHabit extends HabitModel {
-    public DailyHabit(UUID id, String name, Category category, List<TagModel> tags) {
-        super(id, name, category, tags);
+    public DailyHabit(UUID id, String name, Category category, List<TagModel> tags, GeofenceInfo geofenceInfo) {
+        super(id, name, category, tags, geofenceInfo);
     }
 
-    public DailyHabit(UUID id, String name, Category category, List<Date> daysHabitCompleted, List<TagModel> tags) {
-        super(id, name, category, daysHabitCompleted, tags);
+    public DailyHabit(UUID id, String name, Category category, List<Date> daysHabitCompleted, List<TagModel> tags, GeofenceInfo geofenceInfo) {
+        super(id, name, category, daysHabitCompleted, tags, geofenceInfo);
     }
 
     @Override

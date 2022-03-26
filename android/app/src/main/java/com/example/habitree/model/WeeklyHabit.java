@@ -2,6 +2,8 @@ package com.example.habitree.model;
 
 import android.annotation.SuppressLint;
 
+
+import com.example.habitree.geofence.GeofenceInfo;
 import com.example.habitree.helpers.DateHelpers;
 
 import java.util.Date;
@@ -9,13 +11,13 @@ import java.util.List;
 import java.util.UUID;
 
 public class WeeklyHabit extends HabitModel {
-    public WeeklyHabit(UUID id, String name, Category category, List<TagModel> tags, int target) {
-        super(id, name, category, tags);
+    public WeeklyHabit(UUID id, String name, Category category, List<TagModel> tags, int target, GeofenceInfo geofenceInfo) {
+        super(id, name, category, tags, geofenceInfo);
         this.target = target;
     }
 
-    public WeeklyHabit(UUID id, String name, Category category, List<Date> daysHabitCompleted, List<TagModel> tags, int target) {
-        super(id, name, category, daysHabitCompleted, tags);
+    public WeeklyHabit(UUID id, String name, Category category, List<Date> daysHabitCompleted, List<TagModel> tags, int target, GeofenceInfo geofenceInfo) {
+        super(id, name, category, daysHabitCompleted, tags, geofenceInfo);
         this.target = target;
     }
 
@@ -23,7 +25,7 @@ public class WeeklyHabit extends HabitModel {
 
     @Override
     float getTreeWeeklyScore(Date startOfWeek) {
-        return (float) this.getCompletionStatus(startOfWeek)/(float) target;
+        return (float) this.getCompletionStatus(startOfWeek) / (float) target;
     }
 
     @SuppressLint("NewApi")

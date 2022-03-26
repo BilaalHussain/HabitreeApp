@@ -1,6 +1,9 @@
 package com.example.habitree.model;
 
+import com.example.habitree.geofence.GeofenceInfo;
+
 import java.io.Serializable;
+
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -8,6 +11,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -43,12 +47,13 @@ public abstract class HabitModel implements Serializable {
     public Category category;
     public List<Date> daysHabitCompleted;
     public List<TagModel> tags;
-
+    public GeofenceInfo geofenceInfo;
     public HabitModel(
             UUID id,
             String name,
             Category category,
-            List<TagModel> tags
+            List<TagModel> tags,
+            GeofenceInfo geofenceInfo
     ) {
         this.id = id;
         this.name = name;
@@ -63,13 +68,15 @@ public abstract class HabitModel implements Serializable {
             String name,
             Category category,
             List<Date> daysHabitCompleted,
-            List<TagModel> tags
+            List<TagModel> tags,
+            GeofenceInfo geofenceInfo
     ) {
         this.id = id;
         this.name = name;
         this.category = category;
         this.tags = tags;
         this.daysHabitCompleted = daysHabitCompleted;
+        this.geofenceInfo = geofenceInfo;
     }
 
     public void complete() {

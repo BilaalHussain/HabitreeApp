@@ -1,7 +1,6 @@
 package com.example.habitree.ui.editing;
 
 import android.annotation.SuppressLint;
-import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -22,6 +21,7 @@ import android.widget.Toast;
 
 import com.example.habitree.R;
 import com.example.habitree.api.HabitApi;
+import com.example.habitree.geofence.GeofenceInfo;
 import com.example.habitree.listener.DeleteTagTapped;
 import com.example.habitree.listener.ToggleIsEditing;
 import com.example.habitree.listener.UpdateTag;
@@ -29,15 +29,12 @@ import com.example.habitree.model.DailyHabit;
 import com.example.habitree.model.HabitModel;
 import com.example.habitree.model.TagModel;
 import com.example.habitree.model.WeeklyHabit;
-import com.example.habitree.ui.HabitAdapter;
 import com.example.habitree.ui.TagAdapter;
+import com.google.gson.Gson;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
@@ -50,6 +47,17 @@ public class EditHabitFragment extends Fragment {
     private final HabitModel h;
     private final Boolean isCreating;
     private HabitApi habitApi;
+    Gson gson = new Gson();
+
+    public static String GEOFENCE_FRAGMENT_REQUEST_KEY = "GEOFENCE_FRAGMENT_REQUEST_KEY";
+
+    public static String GEOFENCE_RESULT_TYPE_KEY = "GEOFENCE_RESULT_TYPE_KEY";
+    public static final String GEOFENCE_CREATE = "GEOFENCE_CREATE";
+    public static final String GEOFENCE_DELETE = "GEOFENCE_DELETE";
+    public static final String GEOFENCE_CANCEL = "GEOFENCE_CANCEL";
+
+    public static final String GEOFENCE_CREATE_DATA = "GEOFENCE_CREATE_DATA";
+
     private EditHabitFragment(HabitModel h, Boolean isCreating) {
         this.h = h;
         this.isCreating = isCreating;
@@ -81,6 +89,8 @@ public class EditHabitFragment extends Fragment {
         final RecyclerView tagList = root.findViewById(R.id.tags_list);
         final Button addTagButton = root.findViewById(R.id.add_tag_button);
 
+
+
         habitName.setText(String.format("%s", h.name));
         if (h instanceof WeeklyHabit) {
             repeatsInput.setVisibility(View.VISIBLE);
@@ -88,7 +98,7 @@ public class EditHabitFragment extends Fragment {
             repeatsInput.setText(String.valueOf(((WeeklyHabit) h).target));
         }
 
-        // set the category spinner to contain a list of alll the current categories
+        // set the category spinner to contain a list of all the current categories
         List<CharSequence> categories = Stream.of(HabitModel.Category.values())
                 .map(HabitModel.Category::toString)
                 .collect(Collectors.toList());
@@ -184,7 +194,7 @@ public class EditHabitFragment extends Fragment {
         });
 
 
-        Button button_save = (Button) root.findViewById(R.id.save_habit_button);
+        Button button_save = root.findViewById(R.id.save_habit_button);
         button_save.setOnClickListener(v -> {
             try {
                 HabitModel.Category selectedCategory = HabitModel.stringToCategory(
@@ -209,23 +219,63 @@ public class EditHabitFragment extends Fragment {
                             habitName.getText().toString(),
                             selectedCategory,
                             newTags,
-                            targetAmount
+                            targetAmount,
+                            h.geofenceInfo
                     );
                     getParentFragmentManager().popBackStack();
                 }
             }
             catch (NumberFormatException e) {
-                Log.e("EDIT", "Onsave int parse fail" + e.getMessage());
+                Log.e("EDIT", "OnSave int parse fail" + e.getMessage());
                 Toast.makeText(getContext(), "Fail", Toast.LENGTH_SHORT).show();
             }
 
         });
 
-        Button button_remove = (Button) root.findViewById(R.id.delete_habit_button);
+
+        final Button manageGeofence = root.findViewById(R.id.geofence_button);
+        manageGeofence.setText(h.geofenceInfo != null && h.geofenceInfo.enabled ? "Edit" : "Create");
+        manageGeofence.setOnClickListener(
+                view ->
+                {
+                    Bundle b = new Bundle();
+                    b.putString("uuid", h.id.toString());
+                    b.putString("geofence", gson.toJson(h.geofenceInfo));
+
+                    getParentFragmentManager()
+                            .beginTransaction()
+                            .replace(
+                                    R.id.nav_host_fragment,
+                                    MapsFragment.class, b)
+                            .addToBackStack(null)
+                            .commit();
+
+                }
+        );
+
+        Button button_remove = root.findViewById(R.id.delete_habit_button);
         button_remove.setOnClickListener(v -> {
             onRemove(h);
             getParentFragmentManager().popBackStack();
         });
+
+        getParentFragmentManager()
+                .setFragmentResultListener(GEOFENCE_FRAGMENT_REQUEST_KEY, this, (requestKey, bundle) -> {
+                    switch(bundle.getString(GEOFENCE_RESULT_TYPE_KEY)) {
+                        case GEOFENCE_CREATE:
+                            String sGeofenceInfo = bundle.getString(GEOFENCE_CREATE_DATA);
+                            this.h.geofenceInfo = gson.fromJson(sGeofenceInfo, GeofenceInfo.class);
+                            manageGeofence.setText("Edit");
+                            break;
+                        case GEOFENCE_DELETE:
+                            this.h.geofenceInfo = new GeofenceInfo(this.h.id.toString());
+                            this.h.geofenceInfo.enabled = false;
+                            break;
+                        case GEOFENCE_CANCEL:
+                            break;
+                    }
+
+                });
         return root;
     }
 
@@ -234,12 +284,13 @@ public class EditHabitFragment extends Fragment {
             String habitName,
             HabitModel.Category category,
             List<TagModel> tags,
-            int targetAmount
+            int targetAmount,
+            GeofenceInfo geoFenceInfo
     ) {
         if (isCreating) {
-            habitApi.createHabit(habitId, habitName, category, tags, targetAmount);
+            habitApi.createHabit(habitId, habitName, category, tags, targetAmount, geoFenceInfo);
         } else {
-            habitApi.updateHabit(habitId, habitName, category, tags, targetAmount);
+            habitApi.updateHabit(habitId, habitName, category, tags, targetAmount, geoFenceInfo);
         }
     }
     private void onComplete(HabitModel h) {
