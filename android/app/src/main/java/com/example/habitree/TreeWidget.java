@@ -3,8 +3,6 @@ package com.example.habitree;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.widget.RemoteViews;
 
 import com.example.habitree.api.HabitApi;
@@ -12,7 +10,6 @@ import com.example.habitree.helpers.DateHelpers;
 import com.example.habitree.model.HabitModel;
 import com.example.habitree.model.ScoreModel;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import java.util.List;
 
