@@ -46,6 +46,6 @@ public class DailyHabit extends HabitModel {
 
     @Override
     public String getReadableStatusString(Date startOfWeek) {
-        return String.format("%s/%s", getCompletionStatus(startOfWeek), 7);
+        return String.format("%s/%s", getCompletionStatus(startOfWeek), DateHelpers.DAYS_IN_WEEK);
     }
 }

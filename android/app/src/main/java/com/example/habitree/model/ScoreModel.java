@@ -19,7 +19,7 @@ public class ScoreModel {
             counts.put(habit.category, counts.getOrDefault(habit.category, 0) + 1);
         }
         for (HabitModel.Category category : scores.keySet()) {
-            scores.put(category, scores.get(category) / counts.get(category));
+            scores.put(category, Math.min(scores.get(category) / counts.get(category), 1));
         }
     }
 
