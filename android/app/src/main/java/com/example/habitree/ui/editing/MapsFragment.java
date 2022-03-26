@@ -32,6 +32,7 @@ import androidx.fragment.app.FragmentManager;
 import com.example.habitree.R;
 import com.example.habitree.geofence.GeofenceHelper;
 import com.example.habitree.geofence.GeofenceInfo;
+import com.example.habitree.presenter.MapsPresenter;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
@@ -55,6 +56,7 @@ public class MapsFragment extends Fragment {
     private final int FINE_LOCATION_ACCESS_REQUEST_CODE = 10001;
     private final int BACKGROUND_LOCATION_ACCESS_REQUEST_CODE = 10002;
 
+    private final MapsPresenter presenter = new MapsPresenter();
     private LatLng center;
     private String id;
     private double radius;
@@ -76,9 +78,20 @@ public class MapsFragment extends Fragment {
         public void onMapReady(GoogleMap googleMap) {
             gMap = googleMap;
             getUserPermission();
-            gMap.setMyLocationEnabled(true);
-            final LatLng mcBuilding = new LatLng(43.4720, -80.544);
-            gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mcBuilding, 16));
+
+
+            if(
+                    (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                            ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                            ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED)
+            ) {
+                gMap.setMyLocationEnabled(true);
+            }
+
+
+            final LatLng zoomLocation = enabled? center: new LatLng(43.4720, -80.544);
+
+            gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(zoomLocation, 16));
 
             if(enabled) {
                 gMap.addMarker(new MarkerOptions().position(center));
@@ -172,32 +185,6 @@ public class MapsFragment extends Fragment {
 
 
     }
-//    public MapsFragment(String ID, GeofenceInfo geofenceInfo) {
-//        id = ID;
-//        if (geofenceInfo == null) {
-//            geofenceInfo = new GeofenceInfo(ID);
-//        }
-//        this.center = new LatLng(geofenceInfo.lat, geofenceInfo.lng);
-//        this.radius = geofenceInfo.radius;
-//        this.enabled = geofenceInfo.enabled;
-//    }
-//    public MapsFragment(String ID) {
-//        id = ID;
-//        this.enabled = false;
-//    }
-//    public static MapsFragment newInstance(String ID, GeofenceInfo geofenceInfo) {
-//        MapsFragment fragment = new MapsFragment(ID, geofenceInfo);
-//        Bundle args = new Bundle();
-//        fragment.setArguments(args);
-//        return fragment;
-//    }
-//    public static MapsFragment newInstance(String ID) {
-//        MapsFragment fragment = new MapsFragment(ID);
-//        Bundle args = new Bundle();
-//        fragment.setArguments(args);
-//        return fragment;
-//    }
-
 
     @Nullable
     @Override
@@ -254,7 +241,7 @@ public class MapsFragment extends Fragment {
         Geofence fence = geofenceHelper.getGeofence(id,
                 center,
                 radius,
-                GeofencingRequest.INITIAL_TRIGGER_ENTER | GeofencingRequest.INITIAL_TRIGGER_DWELL);
+                GeofencingRequest.INITIAL_TRIGGER_ENTER | GeofencingRequest.INITIAL_TRIGGER_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT);
         GeofencingRequest request = geofenceHelper.getGeofencingRequest(fence);
         PendingIntent intent = geofenceHelper.getPendingIntent();
         getUserPermission();

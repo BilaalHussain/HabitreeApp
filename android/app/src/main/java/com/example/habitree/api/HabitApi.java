@@ -181,7 +181,7 @@ public class HabitApi {
         );
     }
 
-    private HabitModel getHabitById(UUID findId) {
+    public HabitModel getHabitById(UUID findId) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         String[] projection = {
                 HabitContract.HabitEntry.COLUMN_NAME_ID,
