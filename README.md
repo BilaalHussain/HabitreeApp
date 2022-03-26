@@ -1,5 +1,5 @@
 # Habitree
-This project's repository is divided into folder.
+This project's repository is divided into 3 folders.
 
 ## ./android
 The native android app source code.
