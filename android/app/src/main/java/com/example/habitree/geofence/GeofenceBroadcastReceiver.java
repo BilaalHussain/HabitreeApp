@@ -62,7 +62,7 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
 
             switch (transitionType) {
                 case Geofence.GEOFENCE_TRANSITION_ENTER:
-                    Toast.makeText(context, "GEOFENCE_TRANSITION_ENTER", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "GEOFENCE_TRANSITION_ENTER");
                     HabitModel model = habitApi.getHabitById(UUID.fromString(uuid));
                     if (model == null) {
                         Log.d(TAG, "Received enter, model is null. Ignoring: " + uuid);
@@ -92,12 +92,10 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
                     habitApi.updateHabitDatesCompleted(model.id, model.daysHabitCompleted);
                     break;
                 case Geofence.GEOFENCE_TRANSITION_DWELL:
-                    Log.d(TAG, "Received dwell: " + uuid);
-                    Toast.makeText(context, "GEOFENCE_TRANSITION_DWELL", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "GEOFENCE_TRANSITION_DWELL" + uuid);
                     break;
                 case Geofence.GEOFENCE_TRANSITION_EXIT:
-                    Log.d(TAG, "Received exit: " + uuid);
-                    Toast.makeText(context, "GEOFENCE_TRANSITION_EXIT", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "GEOFENCE_TRANSITION_EXIT" + uuid);
                     break;
             }
 
