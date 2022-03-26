@@ -2,9 +2,10 @@ package com.example.habitree.model;
 
 import android.annotation.SuppressLint;
 
-import com.example.habitree.geofence.GeofenceInfo;
 
-import java.util.Calendar;
+import com.example.habitree.geofence.GeofenceInfo;
+import com.example.habitree.helpers.DateHelpers;
+
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -30,20 +31,15 @@ public class WeeklyHabit extends HabitModel {
     @SuppressLint("NewApi")
     @Override
     int getCompletionStatus(Date startOfWeek) {
-        Date currTime = Calendar.getInstance().getTime();
         return (int) daysHabitCompleted.stream().filter(day ->
-                day.after(startOfWeek) && day.before(currTime)
+                DateHelpers.dateOccuredInWeek(startOfWeek, day)
         ).count();
     }
 
     @SuppressLint("NewApi")
     @Override
     public boolean isToDo(Date startOfWeek) {
-        Date currTime = Calendar.getInstance().getTime();
-        int numDaysHabitCompletedInLastWeek = (int) daysHabitCompleted.stream().filter(day ->
-                day.after(startOfWeek) && day.before(currTime)
-        ).count();
-        return numDaysHabitCompletedInLastWeek < target;
+        return getCompletionStatus(startOfWeek) < target;
     }
 
     @Override

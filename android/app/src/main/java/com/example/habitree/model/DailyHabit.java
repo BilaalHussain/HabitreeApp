@@ -3,6 +3,7 @@ package com.example.habitree.model;
 import android.annotation.SuppressLint;
 
 import com.example.habitree.geofence.GeofenceInfo;
+import com.example.habitree.helpers.DateHelpers;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -22,15 +23,14 @@ public class DailyHabit extends HabitModel {
 
     @Override
     float getTreeWeeklyScore(Date startOfWeek) {
-        return (float) this.getCompletionStatus(startOfWeek) / 7f;
+        return (float) this.getCompletionStatus(startOfWeek)/DateHelpers.DAYS_IN_WEEK;
     }
 
     @SuppressLint("NewApi")
     @Override
     int getCompletionStatus(Date startOfWeek) {
-        Date currTime = Calendar.getInstance().getTime();
         return (int) daysHabitCompleted.stream().filter(day ->
-                day.after(startOfWeek) && day.before(currTime)
+                DateHelpers.dateOccuredInWeek(startOfWeek, day)
         ).count();
     }
 
@@ -47,6 +47,6 @@ public class DailyHabit extends HabitModel {
 
     @Override
     public String getReadableStatusString(Date startOfWeek) {
-        return String.format("%s/%s", getCompletionStatus(startOfWeek), 7);
+        return String.format("%s/%s", getCompletionStatus(startOfWeek), DateHelpers.DAYS_IN_WEEK);
     }
 }

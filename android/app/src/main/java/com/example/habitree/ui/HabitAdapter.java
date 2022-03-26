@@ -11,18 +11,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.habitree.R;
+import com.example.habitree.helpers.DateHelpers;
 import com.example.habitree.listener.CheckBoxTapped;
 import com.example.habitree.listener.EventListener;
 import com.example.habitree.listener.HabitTapped;
 import com.example.habitree.model.HabitModel;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
-import static java.time.DayOfWeek.SUNDAY;
-import static java.time.temporal.TemporalAdjusters.previous;
 
 public class HabitAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -66,10 +63,7 @@ public class HabitAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         EventListener eventListener;
 
         public void setHabit(HabitModel habit) {
-            final LocalDate today = LocalDate.now();
-            final LocalDate thisPastSunday = today.with(previous(SUNDAY));
-            ZoneId defaultZoneId = ZoneId.systemDefault();
-            Date lastSundayDate = Date.from(thisPastSunday.atStartOfDay(defaultZoneId).toInstant());
+            Date lastSundayDate = DateHelpers.startOfCurrentWeek();
 
             habitTitleAndCheck.setText(habit.name);
             habitTitleAndCheck.setChecked(!habit.isToDoToday());

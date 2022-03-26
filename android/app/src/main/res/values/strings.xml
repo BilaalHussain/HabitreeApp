@@ -19,4 +19,6 @@
     <string name="delete_geofence_text">Delete</string>
     <string name="share_tree">"Hey! I'm using Habitree to track my habits, check out my tree - "</string>
     <string name="channel_description">Habitree notifications</string>
+    <string name="add_widget">Add widget</string>
+    <string name="tree_widget_description">Display your current week\'s tree.</string>
 </resources>

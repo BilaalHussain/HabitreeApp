@@ -19,7 +19,7 @@ public class ScoreModel {
             counts.put(habit.category, counts.getOrDefault(habit.category, 0) + 1);
         }
         for (HabitModel.Category category : scores.keySet()) {
-            scores.put(category, scores.get(category) / counts.get(category));
+            scores.put(category, Math.min(scores.get(category) / counts.get(category), 1));
         }
     }
 
@@ -32,5 +32,17 @@ public class ScoreModel {
                 scores.getOrDefault(HabitModel.Category.WORK, 0f),
                 0 // TODO: Use user ID as seed
         ));
+    }
+
+    public Map<HabitModel.Category, Float> percentageBreakdown() {
+        float sum = 0f;
+        for (HabitModel.Category category : scores.keySet()) {
+            sum += scores.get(category);
+        }
+        Map<HabitModel.Category, Float> breakdown = new HashMap<>();
+        for (HabitModel.Category category : scores.keySet()) {
+            breakdown.put(category, sum == 0 ? 0 : scores.get(category)/sum);
+        }
+        return breakdown;
     }
 }
