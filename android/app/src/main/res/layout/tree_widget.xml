@@ -1,0 +1,15 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scrollbarSize="30dp"
+    android:theme="@style/Theme.Habitree.AppWidgetContainer">
+
+    <ImageView
+        android:id="@+id/tree_widget_image_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:srcCompat="@drawable/tree"></ImageView>
+
+</RelativeLayout>

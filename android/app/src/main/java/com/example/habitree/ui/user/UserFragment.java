@@ -34,12 +34,7 @@ public class UserFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_user, container, false);
 
-        Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        startOfCurrentWeek = cal.getTime();
+        startOfCurrentWeek = DateHelpers.startOfCurrentWeek();
 
         prevBtn = root.findViewById(R.id.previous_week_btn);
         nextBtn = root.findViewById(R.id.next_week_btn);
@@ -68,7 +63,6 @@ public class UserFragment extends Fragment {
 
     private void renderTree(Date startOfWeek) {
         List<HabitModel> habits = (new HabitApi(getContext())).getAllHabits();
-
         ScoreModel score = new ScoreModel(habits, startOfWeek);
         DateFormat df = new SimpleDateFormat("MMMM dd, yyyy");
         TreeModel tree = new TreeModel("Week of " + df.format(startOfWeek), score);
