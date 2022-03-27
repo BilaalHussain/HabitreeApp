@@ -61,7 +61,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private LoginViewModel loginViewModel;
     private ActivityLoginBinding binding;
-    private FirebaseAuth mAuth;
+    FirebaseAuth mAuth;
     Context context;
     GoogleSignInOptions gso;
     GoogleSignInClient gsc;
@@ -72,11 +72,11 @@ public class LoginActivity extends AppCompatActivity {
         context = this;
 
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
 
         gsc = GoogleSignIn.getClient(this, gso);
-
 
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -216,17 +216,22 @@ public class LoginActivity extends AppCompatActivity {
         if(requestCode == 100) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
-                task.getResult(ApiException.class);
-                MainActivity();
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+                firebaseAuthWithGoogle(account);
             } catch (ApiException e) {
                 Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
-    public void MainActivity() {
-        finish();
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        startActivity(intent);
+    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
+        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        mAuth.signInWithCredential(credential)
+                .addOnSuccessListener(this, authResult -> {
+                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                    finish();
+                })
+                .addOnFailureListener(this, e -> Toast.makeText(getApplicationContext(), "Authentication failed.",
+                        Toast.LENGTH_SHORT).show());
     }
 }
