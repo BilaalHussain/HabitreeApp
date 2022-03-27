@@ -17,8 +17,13 @@ public class DateHelpers {
 
     public static Date startOfCurrentWeek() {
         final LocalDate today = LocalDate.now();
-        final LocalDate thisPastSunday = today.with(previous(SUNDAY));
         ZoneId defaultZoneId = ZoneId.systemDefault();
+
+        if(today.atStartOfDay().getDayOfWeek() == SUNDAY) {
+            return Date.from(today.atStartOfDay(defaultZoneId).toInstant());
+        }
+        final LocalDate thisPastSunday = today.with(previous(SUNDAY));
+
         return Date.from(thisPastSunday.atStartOfDay(defaultZoneId).toInstant());
     }
 }
