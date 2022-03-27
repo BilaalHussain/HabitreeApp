@@ -15,9 +15,9 @@ import java.util.ArrayList;
 
 public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.MyViewHolder> {
     Context context;
-    ArrayList<LeaderboardFriend> leaderboardFriends;
+    ArrayList<LeaderboardFriendModel> leaderboardFriends;
 
-    public LeaderboardAdapter(Context context, ArrayList<LeaderboardFriend> leaderboardFriends) {
+    public LeaderboardAdapter(Context context, ArrayList<LeaderboardFriendModel> leaderboardFriends) {
         this.context = context;
         this.leaderboardFriends = leaderboardFriends;
     }
@@ -33,7 +33,7 @@ public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.
     @Override
     public void onBindViewHolder(@NonNull LeaderboardAdapter.MyViewHolder holder, int position) {
         holder.tvName.setText(leaderboardFriends.get(position).getFriendName());
-        holder.tvScore.setText(leaderboardFriends.get(position).getFriendScore());
+        holder.tvScore.setText(Float.toString(leaderboardFriends.get(position).getFriendScore()));
 
     }
 
