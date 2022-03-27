@@ -6,6 +6,11 @@
     android:layout_height="match_parent"
     tools:context=".ui.leaderboard.LeaderboardFragment">
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/LRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
     <TextView
         android:id="@+id/text_dashboard"
         android:layout_width="match_parent"

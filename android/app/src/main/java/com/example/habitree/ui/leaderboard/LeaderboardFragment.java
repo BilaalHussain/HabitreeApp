@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -14,11 +15,28 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.habitree.ui.follow.FollowFragment;
 
 import com.example.habitree.R;
 
+import java.util.ArrayList;
+
 public class LeaderboardFragment extends Fragment {
+
+    ArrayList<LeaderboardFriend> leaderboardlist = new ArrayList<>();
+
+    private void setUpLeaderboardFriends() {
+        //connect to the backend later - for now hardcode
+        String[] friendNames = {"Joe", "Sarah"};
+        String[] friendScores = {"1234", "23454"};
+
+        for (int i = 0; i < friendNames.length; i++){
+            leaderboardlist.add(new LeaderboardFriend(friendNames[i], friendScores[i]));
+        }
+    }
 
     private LeaderboardViewModel leaderboardViewModel;
 
@@ -41,6 +59,15 @@ public class LeaderboardFragment extends Fragment {
             replaceFragment(FollowFragment.newInstance());
         });
 
+        RecyclerView recyclerView = root.findViewById(R.id.LRecyclerView);
+
+        setUpLeaderboardFriends();
+
+        LeaderboardAdapter adapter = new LeaderboardAdapter(getContext(), leaderboardlist);
+
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
         return root;
     }
 
@@ -50,4 +77,5 @@ public class LeaderboardFragment extends Fragment {
         t.addToBackStack(null);
         t.commit();
     }
+
 }
