@@ -20,6 +20,7 @@ import com.example.habitree.api.FirestoreAPI;
 import com.example.habitree.api.HabitApi;
 import com.example.habitree.presenter.LeaderboardPresenter;
 import com.example.habitree.ui.follow.FollowFragment;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class LeaderboardFragment extends Fragment {
 
@@ -38,7 +39,7 @@ public class LeaderboardFragment extends Fragment {
         leaderboardPresenter = new LeaderboardPresenter(
                 new FirestoreAPI(requireContext()),
                 new HabitApi(requireContext()),
-                "vXf3QpHOAgZ9lrbffk1J9odFCqH3" // TODO: Code to get login
+                FirebaseAuth.getInstance().getCurrentUser().getUid()
                 );
 
         root.findViewById(R.id.upload_score_button).setOnClickListener(

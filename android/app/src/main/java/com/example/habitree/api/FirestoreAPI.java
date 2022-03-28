@@ -21,47 +21,49 @@ import java.util.Map;
 public class FirestoreAPI {
     String TAG = "FirestoreAPI";
     FirebaseFirestore db;
-
+    List<PersonModel> followees = new ArrayList<PersonModel>();
 
     public FirestoreAPI(Context context) {
         db = FirebaseFirestore.getInstance();
     }
 
     public void followUser(String followeeUUID, String userUUID) {
-
         DocumentReference docRef = db.collection("users").document(followeeUUID);
-        docRef.get().addOnCompleteListener(task -> {
-            DocumentSnapshot document = task.getResult();
-            if (!document.exists()) {
-                Log.e(TAG, "followUser could not find the user to follow at path" + docRef.toString());
-                return;
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
+                    db.collection("users").document(userUUID)
+                            .update("followees", FieldValue.arrayUnion(followeeUUID));
+                }
             }
-
-            db.collection("users").document(userUUID)
-                    .update("followees", FieldValue.arrayUnion(followeeUUID));
         });
     }
 
     public List<PersonModel> getFolloweeScores(String userUUID) {
         DocumentReference docRef = db.collection("users").document(userUUID);
-        List<PersonModel> followees = new ArrayList<>();
-        docRef.get().addOnCompleteListener(task -> {
-            DocumentSnapshot document = task.getResult();
-            if (!document.exists()) {
-                Log.d(TAG, "getFolloweeScores called, but user doesnt exist! " + userUUID);
-                return;
-            }
-            List<String> followeeUUIDs = (List<String>) document.get("followees");
-            for (String followeeUUID : followeeUUIDs) {
-                db.collection("users").document(followeeUUID)
-                        .get().addOnCompleteListener(followeeTask -> {
-                    DocumentSnapshot innerDoc = task.getResult();
-                    if (innerDoc.exists()) {
-                        List<Float> scores = (List<Float>) innerDoc.get("scores");
-                        String name = (String) innerDoc.get("name");
-                        followees.add(new PersonModel(scores, name));
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
+                    List<String> followeeUUIDs = (List<String>) document.get("followees");
+                    for (String followeeUUID : followeeUUIDs) {
+                        db.collection("users").document(followeeUUID)
+                                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> followeeTask) {
+                                DocumentSnapshot innerDoc = task.getResult();
+                                if (innerDoc.exists()) {
+                                    List<Float> scores = (List<Float>) innerDoc.get("scores");
+                                    String name = (String) innerDoc.get("name");
+                                    followees.add(new PersonModel(scores, name));
+                                }
+                            }
+                        });
                     }
-                });
+                }
             }
         });
         return followees;
