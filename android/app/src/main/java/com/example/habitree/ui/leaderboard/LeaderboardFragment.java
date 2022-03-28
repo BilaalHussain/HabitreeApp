@@ -29,10 +29,6 @@ import com.example.habitree.ui.tree.TreeFragment;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
 
 public class LeaderboardFragment extends Fragment {
 
@@ -40,25 +36,6 @@ public class LeaderboardFragment extends Fragment {
     ArrayList<LeaderboardFriendModel> leaderboardlist = new ArrayList<>();
     private final FirestoreAPI firestoreAPI = new FirestoreAPI(this.getContext());
 
-    private void setUpLeaderboardFriends() {
-        //connect to the backend later - for now hardcode
-//        List<PersonModel> followees = firestoreAPI.getFolloweeScores(UID); TODO: Fix getFollower method
-        List<PersonModel> followees = new ArrayList<PersonModel>();
-        followees.add(new PersonModel(new ArrayList<Float>(Arrays.asList(0f, 2.0f, 3.1f, 4.1f, 4.1f)), "Roberto", UUID.randomUUID().toString()));
-        followees.add(new PersonModel(new ArrayList<Float>(Arrays.asList(1.0f, 2.0f, 3.1f, 4.1f, 4.1f)), "Meimei", UUID.randomUUID().toString()));
-        followees.add(new PersonModel(new ArrayList<Float>(Arrays.asList(1.0f, 6.0f, 3.1f, 4.1f, 3.1f)), "Xiaoli", UUID.randomUUID().toString()));
-        followees.add(new PersonModel(new ArrayList<Float>(Arrays.asList(1.0f, 2.0f, 3.1f, 4.1f, 0.1f)), "Sam", UUID.randomUUID().toString()));
-        followees.add(new PersonModel(new ArrayList<Float>(Arrays.asList(1.0f, 2.0f, 3.1f, 4.1f, 0.1f)), "Sam", UUID.randomUUID().toString()));
-        followees.add(new PersonModel(new ArrayList<Float>(Arrays.asList(1.0f, 2.0f, 3.1f, 4.1f, 0.1f)), "Sam", UUID.randomUUID().toString()));
-        followees.add(new PersonModel(new ArrayList<Float>(Arrays.asList(1.0f, 2.0f, 3.1f, 4.1f, 0.1f)), "Sam", UUID.randomUUID().toString()));
-
-        for (PersonModel person : followees) {
-            leaderboardlist.add(new LeaderboardFriendModel(person.getName(), person.getScore()));
-        }
-
-        Collections.sort(leaderboardlist);
-        Collections.reverse(leaderboardlist);
-    }
 
     private LeaderboardViewModel leaderboardViewModel;
     private LeaderboardPresenter leaderboardPresenter;
@@ -89,7 +66,7 @@ public class LeaderboardFragment extends Fragment {
                     }
                 });
 
-        leaderboardViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        //leaderboardViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
 
 
         followUserButton.setOnClickListener(event -> {
@@ -98,14 +75,15 @@ public class LeaderboardFragment extends Fragment {
 
         RecyclerView recyclerView = root.findViewById(R.id.LRecyclerView);
 
-        setUpLeaderboardFriends();
-
         LeaderboardAdapter adapter = new LeaderboardAdapter(getContext(), leaderboardlist);
         adapter.setEventListener(event -> {
             PersonTapped personTappedEvent = (PersonTapped) event;
             TreeModel tree = new TreeModel(personTappedEvent.person.friendName + "'s Tree", personTappedEvent.person.friendScore, false);
             replaceFragment(TreeFragment.newInstance(tree));
         });
+
+        String UID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        firestoreAPI.getFolloweeScores(UID, new AddFolloweeCallback(adapter));
 
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

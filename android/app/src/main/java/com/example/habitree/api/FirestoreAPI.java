@@ -6,6 +6,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.example.habitree.model.PersonModel;
+import com.example.habitree.ui.leaderboard.AddFolloweeCallback;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class FirestoreAPI {
     String TAG = "FirestoreAPI";
@@ -42,8 +44,9 @@ public class FirestoreAPI {
         });
     }
 
-    public List<PersonModel> getFolloweeScores(String userUUID) {
+    public List<PersonModel> getFolloweeScores(String userUUID, AddFolloweeCallback addFollowee) {
         DocumentReference docRef = db.collection("users").document(userUUID);
+
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -55,11 +58,12 @@ public class FirestoreAPI {
                                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<DocumentSnapshot> followeeTask) {
-                                DocumentSnapshot innerDoc = task.getResult();
+                                DocumentSnapshot innerDoc = followeeTask.getResult();
                                 if (innerDoc.exists()) {
-                                    List<Float> scores = (List<Float>) innerDoc.get("scores");
+                                    List<Double> scores_double = (List<Double>) innerDoc.get("scores");
+                                    List<Float> scores = scores_double.stream().map(i -> new Float(i)).collect(Collectors.toList());
                                     String name = (String) innerDoc.get("name");
-                                    followees.add(new PersonModel(scores, name, followeeUUID));
+                                    addFollowee.execute(new PersonModel(scores, name, followeeUUID));
                                 }
                             }
                         });

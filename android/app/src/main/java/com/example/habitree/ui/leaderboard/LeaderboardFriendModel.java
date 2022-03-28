@@ -1,5 +1,6 @@
 package com.example.habitree.ui.leaderboard;
 
+import com.example.habitree.model.PersonModel;
 import com.example.habitree.model.ScoreModel;
 
 public class LeaderboardFriendModel implements Comparable<LeaderboardFriendModel> {
@@ -9,6 +10,11 @@ public class LeaderboardFriendModel implements Comparable<LeaderboardFriendModel
     public LeaderboardFriendModel(String friendName, ScoreModel friendScore) {
         this.friendName = friendName;
         this.friendScore = friendScore;
+    }
+
+    public LeaderboardFriendModel(PersonModel person) {
+        this.friendName = person.getName();
+        this.friendScore = person.getScore();
     }
 
     public String getFriendName() {

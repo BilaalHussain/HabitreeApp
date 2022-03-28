@@ -5,16 +5,15 @@
     android:id="@+id/frameLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginBottom="100dp"
     android:background="@color/parchement"
-    app:layout_constraintVertical_chainStyle="spread"
     tools:context=".ui.tree.TreeFragment">
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <TextView
             android:id="@+id/tree_title"
@@ -173,7 +172,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="-40dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="100dp"
             android:adjustViewBounds="true"
             android:scaleX="0.7"
             android:scaleY="0.7" />
@@ -186,7 +185,7 @@
         android:layout_width="wrap_content"
         android:layout_height="100dp"
         android:layout_marginStart="328dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="120dp"
         android:baselineAlignBottom="false"
         android:baselineAligned="false"
         android:clickable="true"

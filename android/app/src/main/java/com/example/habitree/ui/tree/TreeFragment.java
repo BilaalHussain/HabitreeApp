@@ -94,8 +94,8 @@ public class TreeFragment extends Fragment {
                     @Override
                     public void onSuccess() {
                         image.setTranslationY(300f);
-                        ObjectAnimator scaleDownX = ObjectAnimator.ofFloat(image, "scaleX", 1.1f);
-                        ObjectAnimator scaleDownY = ObjectAnimator.ofFloat(image, "scaleY", 1.1f);
+                        ObjectAnimator scaleDownX = ObjectAnimator.ofFloat(image, "scaleX", 1f);
+                        ObjectAnimator scaleDownY = ObjectAnimator.ofFloat(image, "scaleY", 1f);
                         ObjectAnimator translateY = ObjectAnimator.ofFloat(image, "translationY", 0f);
                         scaleDownX.setDuration(1000);
                         scaleDownY.setDuration(1000);
