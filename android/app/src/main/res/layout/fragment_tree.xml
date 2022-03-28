@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginBottom="100dp"
+    android:background="@color/parchement"
     app:layout_constraintVertical_chainStyle="spread"
     tools:context=".ui.tree.TreeFragment">
 
@@ -36,9 +37,8 @@
             android:id="@+id/cardViewGraph"
             android:layout_width="match_parent"
             android:layout_height="169dp"
-            android:layout_margin="16dp"
             android:layout_marginHorizontal="10dp"
-            android:backgroundTint="#FAF7ED"
+            android:backgroundTint="@color/white"
             android:backgroundTintMode="src_in"
             android:elevation="10dp"
             app:cardCornerRadius="10dp"
@@ -187,11 +187,11 @@
         android:layout_height="100dp"
         android:layout_marginStart="328dp"
         android:layout_marginBottom="10dp"
-        android:backgroundTint="@color/green"
         android:baselineAlignBottom="false"
         android:baselineAligned="false"
         android:clickable="true"
         android:src="@android:drawable/ic_menu_share"
+        app:backgroundTint="@color/green"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:ignore="SpeakableTextPresentCheck" />

@@ -4,19 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/parchement"
     android:orientation="vertical"
     tools:context=".ui.user.UserFragment">
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="serif"
         android:paddingLeft="16dp"
         android:paddingTop="16dp"
         android:paddingBottom="32dp"
-        android:text="Your habit data"
+        android:text="Your Habit Data"
         android:textSize="32sp" />
 
     <LinearLayout
