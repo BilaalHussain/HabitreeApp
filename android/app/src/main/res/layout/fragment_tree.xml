@@ -6,7 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginBottom="100dp"
-    android:background="@color/white"
     app:layout_constraintVertical_chainStyle="spread"
     tools:context=".ui.tree.TreeFragment">
 
@@ -24,16 +23,22 @@
             android:layout_marginTop="10dp"
             android:layout_marginEnd="9dp"
             android:layout_marginBottom="10dp"
-            android:text="Week of ... "
+            android:capitalize="characters"
+            android:letterSpacing="0.15"
+            android:text="WEEK OF "
             android:textAlignment="center"
-            android:textSize="25sp" />
+            android:textAllCaps="true"
+            android:textColor="#555555"
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardViewGraph"
             android:layout_width="match_parent"
             android:layout_height="169dp"
+            android:layout_margin="16dp"
             android:layout_marginHorizontal="10dp"
-            android:backgroundTint="@color/light_yellow"
+            android:backgroundTint="#FAF7ED"
             android:backgroundTintMode="src_in"
             android:elevation="10dp"
             app:cardCornerRadius="10dp"
@@ -182,6 +187,7 @@
         android:layout_height="100dp"
         android:layout_marginStart="328dp"
         android:layout_marginBottom="10dp"
+        android:backgroundTint="@color/green"
         android:baselineAlignBottom="false"
         android:baselineAligned="false"
         android:clickable="true"

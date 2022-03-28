@@ -111,15 +111,14 @@
 
     <Button
         android:id="@+id/add_tag_button"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:textSize="12sp"
-        android:textColor="@color/black"
-        android:text="Add Tag"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
         android:paddingHorizontal="@dimen/activity_horizontal_margin"
-        app:layout_constraintTop_toTopOf="@id/tags_label"
+        android:text="Add Tag"
+        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="@id/tags_label"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tags_label" />
 
 
     <TextView
@@ -137,16 +136,14 @@
 
     <Button
         android:id="@+id/geofence_button"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:textSize="14sp"
-        android:textColor="@color/black"
-        app:layout_constraintTop_toTopOf="@id/geofence_label"
-        app:layout_constraintBottom_toBottomOf="@id/geofence_label"
-        app:layout_constraintStart_toEndOf="@id/geofence_label"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
         android:text="Create"
-        tools:text="Create"/>
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@id/geofence_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/geofence_label"
+        app:layout_constraintTop_toTopOf="@id/geofence_label" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tags_list"
