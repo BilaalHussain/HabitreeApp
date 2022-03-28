@@ -5,11 +5,9 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.example.habitree.model.HabitModel;
 import com.example.habitree.model.PersonModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.common.collect.ImmutableMap;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
@@ -17,7 +15,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,16 +70,10 @@ public class FirestoreAPI {
         return followees;
     }
 
-    public void saveScore(String uuid, ImmutableMap<HabitModel.Category, Float> scores) {
+    public void saveScore(String uuid, List <Float> scores) {
         Map<String, Object> user = new HashMap<>();
         user.put("id", uuid);
-        user.put("scores", Arrays.asList(
-                scores.getOrDefault(HabitModel.Category.WORK, 0f),
-                scores.getOrDefault(HabitModel.Category.ACADEMIC, 0f),
-                scores.getOrDefault(HabitModel.Category.FITNESS, 0f),
-                scores.getOrDefault(HabitModel.Category.CREATIVE, 0f),
-                scores.getOrDefault(HabitModel.Category.SELF_HELP, 0f)
-        ));
+        user.put("scores", scores);
 
         db.collection("users").document(uuid)
                 .set(user, SetOptions.merge())

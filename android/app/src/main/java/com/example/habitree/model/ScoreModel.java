@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 
 import java.net.URI;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -43,15 +44,15 @@ public class ScoreModel {
         }
         Map<HabitModel.Category, Float> breakdown = new HashMap<>();
         for (HabitModel.Category category : scores.keySet()) {
-            breakdown.put(category, sum == 0 ? 0 : scores.get(category)/sum);
+            breakdown.put(category, sum == 0 ? 0 : scores.get(category) / sum);
         }
         return breakdown;
     }
 
-    public ImmutableMap<HabitModel.Category, Float> getScore(boolean bonus) {
+    public List<Float> getScore(boolean bonus) {
         // "Curve" score: 10 * sqrt(score as percent)
-        if( ! bonus ) {
-            return ImmutableMap.copyOf(scores);
+        if (!bonus) {
+            return mapToList(ImmutableMap.copyOf(scores));
         }
 
         Map<HabitModel.Category, Float> curvedScores = new HashMap<HabitModel.Category, Float>(scores);
@@ -59,9 +60,18 @@ public class ScoreModel {
         for (HabitModel.Category key : curvedScores.keySet()) {
             float originalScoreAsPercent = curvedScores.getOrDefault(key, 0f) * 100f;
 
-            float curved = (float) (10f * Math.sqrt(originalScoreAsPercent))/ 100f;
+            float curved = (float) (10f * Math.sqrt(originalScoreAsPercent)) / 100f;
             curvedScores.put(key, curved);
         }
-        return ImmutableMap.copyOf(curvedScores);
+        return mapToList(ImmutableMap.copyOf(curvedScores));
+    }
+
+    public static List<Float> mapToList(ImmutableMap<HabitModel.Category, Float> scores) {
+        return Arrays.asList(
+                scores.getOrDefault(HabitModel.Category.ACADEMIC, 0f),
+                scores.getOrDefault(HabitModel.Category.CREATIVE, 0f),
+                scores.getOrDefault(HabitModel.Category.FITNESS, 0f),
+                scores.getOrDefault(HabitModel.Category.SELF_HELP, 0f),
+                scores.getOrDefault(HabitModel.Category.WORK, 0f));
     }
 }

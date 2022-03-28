@@ -42,11 +42,13 @@ public class LeaderboardPresenter implements AbstractPresenter {
         DayOfWeek d = LocalDate.now().getDayOfWeek();
         return d == SUNDAY || d == MONDAY || d == TUESDAY || d == WEDNESDAY;
     }
+
     public void saveScore(
             ScoreModel scoreModel,
             boolean giveBonus) {
 
-        firestoreAPI.saveScore(firebaseUuid, scoreModel.getScore(giveBonus));
+        firestoreAPI.saveScore(firebaseUuid,
+                scoreModel.getScore(giveBonus));
 
 
     }
