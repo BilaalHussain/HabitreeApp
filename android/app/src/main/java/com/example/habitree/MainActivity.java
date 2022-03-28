@@ -1,24 +1,28 @@
 package com.example.habitree;
 
+
+import android.os.Bundle;
+
+
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
+
 
 import com.example.habitree.notifications.AlarmReceiver;
-import com.example.habitree.ui.login.LoginActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
+
 import androidx.navigation.ui.NavigationUI;
 
+
 import java.util.Calendar;
+
 
 public class MainActivity extends AppCompatActivity {
 

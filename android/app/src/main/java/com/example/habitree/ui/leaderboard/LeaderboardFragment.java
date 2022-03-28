@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -15,13 +16,13 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.habitree.api.FirestoreAPI;
-import com.example.habitree.listener.PersonTapped;
-import com.example.habitree.model.PersonModel;
-import com.example.habitree.model.TreeModel;
-import com.example.habitree.ui.follow.FollowFragment;
-
 import com.example.habitree.R;
+import com.example.habitree.api.FirestoreAPI;
+import com.example.habitree.api.HabitApi;
+import com.example.habitree.listener.PersonTapped;
+import com.example.habitree.model.TreeModel;
+import com.example.habitree.presenter.LeaderboardPresenter;
+import com.example.habitree.ui.follow.FollowFragment;
 import com.example.habitree.ui.tree.TreeFragment;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -29,10 +30,13 @@ import java.util.ArrayList;
 
 public class LeaderboardFragment extends Fragment {
 
+    private static final String TAG = "LeaderboardFragment";
     ArrayList<LeaderboardFriendModel> leaderboardlist = new ArrayList<>();
     private final FirestoreAPI firestoreAPI = new FirestoreAPI(this.getContext());
 
+
     private LeaderboardViewModel leaderboardViewModel;
+    private LeaderboardPresenter leaderboardPresenter;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -40,6 +44,25 @@ public class LeaderboardFragment extends Fragment {
                 new ViewModelProvider(this).get(LeaderboardViewModel.class);
         View root = inflater.inflate(R.layout.fragment_leaderboard, container, false);
         final Button followUserButton = root.findViewById(R.id.follow_user_button);
+
+        leaderboardPresenter = new LeaderboardPresenter(
+                new FirestoreAPI(requireContext()),
+                new HabitApi(requireContext()),
+                FirebaseAuth.getInstance().getCurrentUser().getUid()
+        );
+
+        root.findViewById(R.id.upload_score_button).setOnClickListener(
+                view ->
+                {
+                    leaderboardPresenter.saveScore(leaderboardPresenter.getScores(),
+                            LeaderboardPresenter.shouldGiveBonus());
+                    if (LeaderboardPresenter.shouldGiveBonus()) {
+                        Toast.makeText(getContext(), "You uploaded your tree early! You got bonus progress!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getContext(), "Uploaded score", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
 
         followUserButton.setOnClickListener(event -> {
             replaceFragment(FollowFragment.newInstance());
@@ -75,7 +98,7 @@ public class LeaderboardFragment extends Fragment {
 
     private void replaceFragment(Fragment f) {
         FragmentManager fm = getParentFragmentManager();
-        FragmentTransaction t = fm.beginTransaction().replace(R.id.nav_host_fragment,f);
+        FragmentTransaction t = fm.beginTransaction().replace(R.id.nav_host_fragment, f);
         t.addToBackStack(null);
         t.commit();
     }

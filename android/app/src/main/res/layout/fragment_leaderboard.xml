@@ -8,13 +8,13 @@
     tools:context=".ui.leaderboard.LeaderboardFragment">
 
     <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
+        android:id="@+id/text_dashboard"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:fontFamily="serif"
-        android:text="Leaderboard"
+        android:text="@string/leaderboard_title"
         android:textSize="32sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -26,10 +26,10 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:backgroundTint="#A7C957"
-        android:text="Follow User"
+        android:text="@string/follow_user_button_string"
         app:icon="@drawable/ic_baseline_person_24"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toBottomOf="@+id/text_dashboard" />
 
     <Button
         android:id="@+id/leaderboard_share"
@@ -39,11 +39,21 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:backgroundTint="#A7C957"
-        android:text="Share your ID"
+        android:text="@string/share_id_button_string"
         app:icon="?attr/actionModeShareDrawable"
         app:layout_constraintEnd_toStartOf="@+id/follow_user_button"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toBottomOf="@+id/text_dashboard" />
+
+    <Button
+        android:id="@+id/upload_score_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#A7C957"
+        android:text="@string/upload_score_button_string"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/leaderboard_share" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/LRecyclerView"
@@ -52,8 +62,9 @@
         android:layout_marginTop="16dp"
         android:layout_marginBottom="54dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/leaderboard_share"
+        app:layout_constraintTop_toBottomOf="@+id/upload_score_button"
         app:layout_constraintVertical_bias="0.0"
         tools:layout_editor_absoluteX="0dp" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

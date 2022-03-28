@@ -22,4 +22,8 @@
     <string name="channel_description">Habitree notifications</string>
     <string name="add_widget">Add widget</string>
     <string name="tree_widget_description">Display your current week\'s tree.</string>
+    <string name="leaderboard_title">Leaderboard</string>
+    <string name="upload_score_button_string">Upload score</string>
+    <string name="share_id_button_string">Share ID</string>
+    <string name="follow_user_button_string">Follow User</string>
 </resources>

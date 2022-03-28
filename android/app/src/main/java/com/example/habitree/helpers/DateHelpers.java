@@ -15,6 +15,7 @@ public class DateHelpers {
         return date.after(startOfWeek) && date.before(new Date(startOfWeek.getTime() + WEEK));
     }
 
+
     public static Date startOfCurrentWeek() {
         final LocalDate today = LocalDate.now();
         ZoneId defaultZoneId = ZoneId.systemDefault();
