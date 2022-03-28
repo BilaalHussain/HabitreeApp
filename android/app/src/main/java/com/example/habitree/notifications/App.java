@@ -1,4 +1,4 @@
-package com.example.habitree;
+package com.example.habitree.notifications;
 
 import android.app.Application;
 import android.app.NotificationChannel;
