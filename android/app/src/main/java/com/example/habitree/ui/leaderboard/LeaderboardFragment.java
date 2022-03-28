@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -21,7 +20,6 @@ import com.example.habitree.R;
 import com.example.habitree.api.FirestoreAPI;
 import com.example.habitree.api.HabitApi;
 import com.example.habitree.listener.PersonTapped;
-import com.example.habitree.model.PersonModel;
 import com.example.habitree.model.TreeModel;
 import com.example.habitree.presenter.LeaderboardPresenter;
 import com.example.habitree.ui.follow.FollowFragment;
@@ -45,7 +43,6 @@ public class LeaderboardFragment extends Fragment {
         leaderboardViewModel =
                 new ViewModelProvider(this).get(LeaderboardViewModel.class);
         View root = inflater.inflate(R.layout.fragment_leaderboard, container, false);
-        final TextView textView = root.findViewById(R.id.text_dashboard);
         final Button followUserButton = root.findViewById(R.id.follow_user_button);
 
         leaderboardPresenter = new LeaderboardPresenter(
@@ -65,8 +62,6 @@ public class LeaderboardFragment extends Fragment {
                         Toast.makeText(getContext(), "Uploaded score", Toast.LENGTH_SHORT).show();
                     }
                 });
-
-        //leaderboardViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
 
 
         followUserButton.setOnClickListener(event -> {
