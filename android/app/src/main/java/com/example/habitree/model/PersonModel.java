@@ -5,10 +5,12 @@ import java.util.List;
 public class PersonModel {
     ScoreModel scores;
     String name;
+    String uuid;
 
     public PersonModel(List<Float> scores, String name, String uuid) {
         this.scores = new ScoreModel(scores, uuid);
         this.name = name;
+        this.uuid = uuid;
     }
 
     public ScoreModel getScore() {
@@ -16,6 +18,10 @@ public class PersonModel {
     }
 
     public String getName() {
-        return this.name;
+        if (this.name != null) {
+            return this.name;
+        } else {
+            return this.uuid.substring(0, 10) + "...";
+        }
     }
 }

@@ -7,11 +7,6 @@ public class LeaderboardFriendModel implements Comparable<LeaderboardFriendModel
     String friendName;
     ScoreModel friendScore;
 
-    public LeaderboardFriendModel(String friendName, ScoreModel friendScore) {
-        this.friendName = friendName;
-        this.friendScore = friendScore;
-    }
-
     public LeaderboardFriendModel(PersonModel person) {
         this.friendName = person.getName();
         this.friendScore = person.getScore();
