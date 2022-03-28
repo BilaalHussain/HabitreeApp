@@ -1,5 +1,6 @@
 package com.example.habitree.ui.leaderboard;
 
+import android.app.Person;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -20,10 +21,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.habitree.api.FirestoreAPI;
+import com.example.habitree.listener.PersonTapped;
 import com.example.habitree.model.PersonModel;
+import com.example.habitree.model.TreeModel;
 import com.example.habitree.ui.follow.FollowFragment;
 
 import com.example.habitree.R;
+import com.example.habitree.ui.tree.TreeFragment;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
@@ -47,8 +51,7 @@ public class LeaderboardFragment extends Fragment {
         followees.add(new PersonModel(new ArrayList<Float>(Arrays.asList(1.0f, 2.0f, 3.1f, 4.1f, 0.1f)), "Sam", UUID.randomUUID().toString()));
 
         for (PersonModel person: followees) {
-            Float personScore = person.getScore().cleanSummaryScoreForLeaderboard();
-            leaderboardlist.add(new LeaderboardFriendModel(person.getName(), personScore));
+            leaderboardlist.add(new LeaderboardFriendModel(person.getName(), person.getScore()));
         }
 
         Collections.sort(leaderboardlist);
@@ -73,12 +76,16 @@ public class LeaderboardFragment extends Fragment {
         setUpLeaderboardFriends();
 
         LeaderboardAdapter adapter = new LeaderboardAdapter(getContext(), leaderboardlist);
+        adapter.setEventListener(event -> {
+            PersonTapped personTappedEvent = (PersonTapped) event;
+            TreeModel tree = new TreeModel(personTappedEvent.person.friendName + "'s Tree", personTappedEvent.person.friendScore, false);
+            replaceFragment(TreeFragment.newInstance(tree));
+        });
 
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // SHARE Button
-
         final Button share = root.findViewById(R.id.leaderboard_share);
         share.setOnClickListener(v -> {
             Intent shareIntent = new Intent(Intent.ACTION_SEND);

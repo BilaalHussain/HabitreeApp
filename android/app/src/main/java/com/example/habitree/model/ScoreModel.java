@@ -35,7 +35,7 @@ public class ScoreModel {
     }
 
     public URI getTreeUri() {
-        int seed = Integer.valueOf(uuid.replaceAll("[^0-9.]", ""));
+        int seed = uuid.hashCode();
         return URI.create(MessageFormat.format("https://us-central1-cs446-habitree.cloudfunctions.net/tree/?red={0}&green={1}&blue={2}&orange={3}&purple={4}&seed={5}",
                 scores.getOrDefault(HabitModel.Category.ACADEMIC, 0f),
                 scores.getOrDefault(HabitModel.Category.CREATIVE, 0f),

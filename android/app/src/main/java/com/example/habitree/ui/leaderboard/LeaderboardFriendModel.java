@@ -1,10 +1,12 @@
 package com.example.habitree.ui.leaderboard;
 
+import com.example.habitree.model.ScoreModel;
+
 public class LeaderboardFriendModel implements Comparable<LeaderboardFriendModel> {
     String friendName;
-    Float friendScore;
+    ScoreModel friendScore;
 
-    public LeaderboardFriendModel(String friendName, Float friendScore) {
+    public LeaderboardFriendModel(String friendName, ScoreModel friendScore) {
         this.friendName = friendName;
         this.friendScore = friendScore;
     }
@@ -14,7 +16,7 @@ public class LeaderboardFriendModel implements Comparable<LeaderboardFriendModel
     }
 
     public Float getFriendScore() {
-        return friendScore;
+        return friendScore.cleanSummaryScoreForLeaderboard();
     }
 
     @Override
