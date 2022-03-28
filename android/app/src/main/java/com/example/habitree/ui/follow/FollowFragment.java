@@ -89,7 +89,8 @@ public class FollowFragment extends Fragment {
         followButton.setOnClickListener(event -> {
             String followeeUserid = useridEditText.getText().toString();
             String userid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            firestoreAPIApi.followUser(followeeUserid, userid);
+            firestoreAPIApi.followUser(followeeUserid, userid,
+                    new RerenderLeaderboardCallback(new LeaderboardFragment(), getParentFragmentManager()));
             replaceFragment(new LeaderboardFragment());
         });
 

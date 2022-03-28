@@ -6,6 +6,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.example.habitree.model.PersonModel;
+import com.example.habitree.ui.follow.RerenderLeaderboardCallback;
 import com.example.habitree.ui.leaderboard.AddFolloweeCallback;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -30,7 +31,7 @@ public class FirestoreAPI {
         db = FirebaseFirestore.getInstance();
     }
 
-    public void followUser(String followeeUUID, String userUUID) {
+    public void followUser(String followeeUUID, String userUUID, RerenderLeaderboardCallback rerenderLeaderboard) {
         DocumentReference docRef = db.collection("users").document(followeeUUID);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -40,6 +41,7 @@ public class FirestoreAPI {
                     db.collection("users").document(userUUID)
                             .update("followees", FieldValue.arrayUnion(followeeUUID));
                 }
+                rerenderLeaderboard.execute();
             }
         });
     }
