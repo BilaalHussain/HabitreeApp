@@ -33,7 +33,7 @@ public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.
     @Override
     public void onBindViewHolder(@NonNull LeaderboardAdapter.MyViewHolder holder, int position) {
         holder.tvName.setText(leaderboardFriends.get(position).getFriendName());
-        holder.tvScore.setText(Float.toString(leaderboardFriends.get(position).getFriendScore()));
+        holder.tvScore.setText(Integer.toString(Math.round(leaderboardFriends.get(position).getFriendScore())));
 
     }
 
