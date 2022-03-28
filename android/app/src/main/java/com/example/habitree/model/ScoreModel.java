@@ -61,24 +61,7 @@ public class ScoreModel {
         return breakdown;
     }
 
-    public List<Float> getScore(boolean bonus) {
-        // "Curve" score: 10 * sqrt(score as percent)
-        if (!bonus) {
-            return mapToList(ImmutableMap.copyOf(scores));
-        }
-
-        Map<HabitModel.Category, Float> curvedScores = new HashMap<HabitModel.Category, Float>(scores);
-
-        for (HabitModel.Category key : curvedScores.keySet()) {
-            float originalScoreAsPercent = curvedScores.getOrDefault(key, 0f) * 100f;
-
-            float curved = (float) (10f * Math.sqrt(originalScoreAsPercent)) / 100f;
-            curvedScores.put(key, curved);
-        }
-        return mapToList(ImmutableMap.copyOf(curvedScores));
-    }
-
-    public static List<Float> mapToList(ImmutableMap<HabitModel.Category, Float> scores) {
+    public List<Float> getScore() {
         return Arrays.asList(
                 scores.getOrDefault(HabitModel.Category.ACADEMIC, 0f),
                 scores.getOrDefault(HabitModel.Category.CREATIVE, 0f),

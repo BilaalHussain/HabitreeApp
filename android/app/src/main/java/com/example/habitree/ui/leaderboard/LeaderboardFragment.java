@@ -54,13 +54,8 @@ public class LeaderboardFragment extends Fragment {
         root.findViewById(R.id.upload_score_button).setOnClickListener(
                 view ->
                 {
-                    leaderboardPresenter.saveScore(leaderboardPresenter.getScores(),
-                            LeaderboardPresenter.shouldGiveBonus());
-                    if (LeaderboardPresenter.shouldGiveBonus()) {
-                        Toast.makeText(getContext(), "You uploaded your tree early! You got bonus progress!", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getContext(), "Uploaded score", Toast.LENGTH_SHORT).show();
-                    }
+                    leaderboardPresenter.saveScore(leaderboardPresenter.getScores());
+                    Toast.makeText(getContext(), "Uploaded score", Toast.LENGTH_SHORT).show();
                 });
 
 

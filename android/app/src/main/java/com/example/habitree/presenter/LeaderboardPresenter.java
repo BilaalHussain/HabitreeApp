@@ -40,19 +40,7 @@ public class LeaderboardPresenter implements AbstractPresenter {
                 firebaseUuid);
     }
 
-    // Give bonus if they submit within first 3 days
-    public static boolean shouldGiveBonus() {
-        DayOfWeek d = LocalDate.now().getDayOfWeek();
-        return d == SUNDAY || d == MONDAY || d == TUESDAY || d == WEDNESDAY;
-    }
-
-    public void saveScore(
-            ScoreModel scoreModel,
-            boolean giveBonus) {
-
-        firestoreAPI.saveScore(firebaseUuid,
-                scoreModel.getScore(giveBonus));
-
-
+    public void saveScore(ScoreModel scoreModel) {
+        firestoreAPI.saveScore(firebaseUuid, scoreModel.getScore());
     }
 }
