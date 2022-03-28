@@ -7,5 +7,5 @@ The native android app source code.
 ## ./functions
 The firebase functions source code.
 
-## ./tree_webpage
+## ./tree_rendering
 The tree rendering source code.
