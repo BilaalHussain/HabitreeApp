@@ -25,9 +25,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.habitree.MainActivity;
 import com.example.habitree.R;
-import com.example.habitree.api.FirestoreAPI;
 import com.example.habitree.databinding.ActivityLoginBinding;
-import com.example.habitree.model.PersonModel;
 import com.google.android.gms.auth.api.identity.BeginSignInRequest;
 import com.google.android.gms.auth.api.identity.SignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -42,7 +40,6 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 
-import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
 
