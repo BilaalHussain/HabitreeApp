@@ -14,13 +14,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.habitree.R;
 import com.example.habitree.listener.EventListener;
 import com.example.habitree.listener.PersonTapped;
+import com.example.habitree.model.PersonModel;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.PersonViewHolder> {
     Context context;
-    ArrayList<LeaderboardFriendModel> leaderboardFriends;
+    List<LeaderboardFriendModel> leaderboardFriends;
 
     private EventListener eventListener;
 
@@ -70,5 +74,12 @@ public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.
             super(itemView);
             this.eventListener = eventListener;
         }
+    }
+
+    public void addFolloweeToLeaderboard(PersonModel followee) {
+        leaderboardFriends.add(new LeaderboardFriendModel(followee));
+        Collections.sort(leaderboardFriends);
+        Collections.reverse(leaderboardFriends);
+        notifyDataSetChanged();
     }
 }
