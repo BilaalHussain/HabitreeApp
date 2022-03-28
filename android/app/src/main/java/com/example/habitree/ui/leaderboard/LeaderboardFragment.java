@@ -47,6 +47,10 @@ public class LeaderboardFragment extends Fragment {
         followees.add(new PersonModel(new ArrayList<Float>(Arrays.asList(1.0f, 2.0f, 3.1f, 4.1f, 4.1f)), "Meimei"));
         followees.add(new PersonModel(new ArrayList<Float>(Arrays.asList(1.0f, 6.0f, 3.1f, 4.1f, 3.1f)), "Xiaoli"));
         followees.add(new PersonModel(new ArrayList<Float>(Arrays.asList(1.0f, 2.0f, 3.1f, 4.1f, 0.1f)), "Sam"));
+        followees.add(new PersonModel(new ArrayList<Float>(Arrays.asList(1.0f, 2.0f, 3.1f, 4.1f, 0.1f)), "Sam"));
+        followees.add(new PersonModel(new ArrayList<Float>(Arrays.asList(1.0f, 2.0f, 3.1f, 4.1f, 0.1f)), "Sam"));
+        followees.add(new PersonModel(new ArrayList<Float>(Arrays.asList(1.0f, 2.0f, 3.1f, 4.1f, 0.1f)), "Sam"));
+
 
 
         for (PersonModel person: followees) {
@@ -69,15 +73,7 @@ public class LeaderboardFragment extends Fragment {
         leaderboardViewModel =
                 new ViewModelProvider(this).get(LeaderboardViewModel.class);
         View root = inflater.inflate(R.layout.fragment_leaderboard, container, false);
-        final TextView textView = root.findViewById(R.id.text_dashboard);
         final Button followUserButton = root.findViewById(R.id.follow_user_button);
-
-        leaderboardViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
 
         followUserButton.setOnClickListener(event -> {
             replaceFragment(FollowFragment.newInstance());

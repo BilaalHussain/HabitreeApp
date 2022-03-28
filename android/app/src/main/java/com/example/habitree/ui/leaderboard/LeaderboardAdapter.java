@@ -1,17 +1,21 @@
 package com.example.habitree.ui.leaderboard;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.habitree.R;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.MyViewHolder> {
     Context context;
@@ -33,7 +37,10 @@ public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.
     @Override
     public void onBindViewHolder(@NonNull LeaderboardAdapter.MyViewHolder holder, int position) {
         holder.tvName.setText(leaderboardFriends.get(position).getFriendName());
-        holder.tvScore.setText(Integer.toString(Math.round(leaderboardFriends.get(position).getFriendScore())));
+        holder.tvScore.setText("Score: " + Integer.toString(Math.round(leaderboardFriends.get(position).getFriendScore())));
+        Integer[] avatars = {R.drawable.avatar1, R.drawable.avatar2, R.drawable.avatar3, R.drawable.avatar4};
+        Integer randomAvatar = new Random().nextInt(4);
+        holder.ivAvatar.setImageDrawable(ResourcesCompat.getDrawable(context.getResources(), avatars[randomAvatar], null));
 
     }
 
@@ -46,11 +53,14 @@ public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.
 
         TextView tvName, tvScore;
 
+        ImageView ivAvatar;
+
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
 
             tvName = itemView.findViewById(R.id.friendName);
             tvScore = itemView.findViewById(R.id.friendScore);
+            ivAvatar = itemView.findViewById(R.id.avatar);
         }
     }
 }
