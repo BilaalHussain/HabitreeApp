@@ -4,8 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.user.UserFragment"
-    android:orientation="vertical">
+    android:background="@color/parchement"
+    android:orientation="vertical"
+    tools:context=".ui.user.UserFragment">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="serif"
+        android:paddingLeft="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="32dp"
+        android:text="Your Habit Data"
+        android:textSize="32sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,25 +30,21 @@
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
-            android:backgroundTint="@color/light_yellow"
-            android:text="Previous"
-            android:textColor="@color/common_google_signin_btn_text_light" />
+            android:text="Previous" />
 
         <Button
             android:id="@+id/next_week_btn"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:backgroundTint="@color/light_yellow"
-            android:text="Next"
-            android:textColor="@color/common_google_signin_btn_text_light" />
+            android:text="Next" />
 
     </LinearLayout>
 
     <FrameLayout
         android:id="@+id/tree_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="585dp">
 
     </FrameLayout>
 

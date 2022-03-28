@@ -34,7 +34,10 @@ public class LeaderboardPresenter implements AbstractPresenter {
     }
 
     public ScoreModel getScores() {
-        return new ScoreModel(habitApi.getAllHabits(), DateHelpers.startOfCurrentWeek());
+        return new ScoreModel(
+                habitApi.getAllHabits(),
+                DateHelpers.startOfCurrentWeek(),
+                firebaseUuid);
     }
 
     // Give bonus if they submit within first 3 days

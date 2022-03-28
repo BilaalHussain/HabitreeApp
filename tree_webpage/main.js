@@ -361,7 +361,7 @@ function draw()
 
 	stroke(0, 0, 0);
 	
-	background(255, 255, 255);
+	background(242, 236, 225);
 	translate(width / 2, height);
 	scale(1, -1);
 	

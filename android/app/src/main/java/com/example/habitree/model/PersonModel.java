@@ -3,15 +3,15 @@ package com.example.habitree.model;
 import java.util.List;
 
 public class PersonModel {
-    List<Float> scores;
+    ScoreModel scores;
     String name;
 
-    public PersonModel(List<Float> scores, String name) {
-        this.scores = scores;
+    public PersonModel(List<Float> scores, String name, String uuid) {
+        this.scores = new ScoreModel(scores, uuid);
         this.name = name;
     }
 
-    public List<Float>getScores() {
+    public ScoreModel getScore() {
         return this.scores;
     }
 

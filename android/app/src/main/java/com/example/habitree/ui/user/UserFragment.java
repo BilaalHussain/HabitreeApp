@@ -19,10 +19,10 @@ import com.example.habitree.model.ScoreModel;
 import com.example.habitree.model.TreeModel;
 import com.example.habitree.presenter.UserPresenter;
 import com.example.habitree.ui.tree.TreeFragment;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -65,9 +65,10 @@ public class UserFragment extends Fragment {
 
     private void renderTree(Date startOfWeek) {
         List<HabitModel> habits = (new HabitApi(getContext())).getAllHabits();
-        ScoreModel score = new ScoreModel(habits, startOfWeek);
+        String uuid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        ScoreModel score = new ScoreModel(habits, startOfWeek, uuid);
         DateFormat df = new SimpleDateFormat("MMMM dd, yyyy");
-        TreeModel tree = new TreeModel("Week of " + df.format(startOfWeek), score);
+        TreeModel tree = new TreeModel("Week of " + df.format(startOfWeek), score, true);
         replaceFragment(TreeFragment.newInstance(tree));
     }
 

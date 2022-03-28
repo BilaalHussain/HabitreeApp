@@ -59,7 +59,7 @@ public class FirestoreAPI {
                                 if (innerDoc.exists()) {
                                     List<Float> scores = (List<Float>) innerDoc.get("scores");
                                     String name = (String) innerDoc.get("name");
-                                    followees.add(new PersonModel(scores, name));
+                                    followees.add(new PersonModel(scores, name, followeeUUID));
                                 }
                             }
                         });

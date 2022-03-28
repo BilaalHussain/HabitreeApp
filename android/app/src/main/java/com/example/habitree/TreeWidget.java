@@ -9,6 +9,7 @@ import com.example.habitree.api.HabitApi;
 import com.example.habitree.helpers.DateHelpers;
 import com.example.habitree.model.HabitModel;
 import com.example.habitree.model.ScoreModel;
+import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -25,7 +26,11 @@ public class TreeWidget extends AppWidgetProvider {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.tree_widget);
 
         List<HabitModel> habits = (new HabitApi(context)).getAllHabits();
-        ScoreModel score = new ScoreModel(habits, DateHelpers.startOfCurrentWeek());
+        ScoreModel score = new ScoreModel(
+                habits,
+                DateHelpers.startOfCurrentWeek(),
+                FirebaseAuth.getInstance().getCurrentUser().getUid()
+        );
 
         Picasso.get()
                 .load(score.getTreeUri().toString())
