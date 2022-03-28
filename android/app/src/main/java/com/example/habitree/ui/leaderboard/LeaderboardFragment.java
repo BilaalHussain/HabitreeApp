@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -77,9 +78,16 @@ public class LeaderboardFragment extends Fragment {
         );
 
         root.findViewById(R.id.upload_score_button).setOnClickListener(
-                view -> leaderboardPresenter.saveScore(leaderboardPresenter.getScores(),
-                        LeaderboardPresenter.shouldGiveBonus())
-        );
+                view ->
+                {
+                    leaderboardPresenter.saveScore(leaderboardPresenter.getScores(),
+                            LeaderboardPresenter.shouldGiveBonus());
+                    if (LeaderboardPresenter.shouldGiveBonus()) {
+                        Toast.makeText(getContext(), "You uploaded your tree early! You got bonus progress!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getContext(), "Uploaded score", Toast.LENGTH_SHORT).show();
+                    }
+                });
 
         leaderboardViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
 
