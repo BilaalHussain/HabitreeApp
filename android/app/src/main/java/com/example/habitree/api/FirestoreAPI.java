@@ -55,6 +55,7 @@ public class FirestoreAPI {
                 DocumentSnapshot document = task.getResult();
                 if (document.exists()) {
                     List<String> followeeUUIDs = (List<String>) document.get("followees");
+                    if (followeeUUIDs == null) return;
                     for (String followeeUUID : followeeUUIDs) {
                         db.collection("users").document(followeeUUID)
                                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
