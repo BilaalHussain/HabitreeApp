@@ -78,7 +78,6 @@ public class TreeFragment extends Fragment {
 
         final TextView title = root.findViewById(R.id.tree_title);
         image = root.findViewById(R.id.tree_image);
-        final FloatingActionButton share = root.findViewById(R.id.share_button);
         pieChart = root.findViewById(R.id.piechart);
 
         // Set the title
@@ -114,12 +113,18 @@ public class TreeFragment extends Fragment {
                     }
                 });
 
-        share.setOnClickListener(v -> {
-            Intent shareIntent = new Intent(Intent.ACTION_SEND);
-            shareIntent.setType("text/plain");
-            shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_tree) + treeUri);
-            startActivity(Intent.createChooser(shareIntent, "Share your tree using"));
-        });
+        final FloatingActionButton share = root.findViewById(R.id.share_button);
+
+        if (tree.sharable) {
+            share.setOnClickListener(v -> {
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.setType("text/plain");
+                shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_tree) + treeUri);
+                startActivity(Intent.createChooser(shareIntent, "Share your tree using"));
+            });
+        } else {
+            share.setVisibility(View.INVISIBLE);
+        }
 
         return root;
     }

@@ -10,8 +10,10 @@ import java.util.Map;
 // Represents a score for a user for a particular week
 public class ScoreModel {
     Map<HabitModel.Category, Float> scores = new HashMap<>();
+    String uuid;
 
-    public ScoreModel(List<HabitModel> habits, Date startOfWeek) {
+    public ScoreModel(List<HabitModel> habits, Date startOfWeek, String uuid) {
+        this.uuid = uuid;
         // Uses average score across all category
         Map<HabitModel.Category, Integer> counts = new HashMap<>();
         for (HabitModel habit : habits) {
@@ -23,14 +25,24 @@ public class ScoreModel {
         }
     }
 
+    public ScoreModel(List<Float> rawScores, String uuid) {
+        this.uuid = uuid;
+        scores.put(HabitModel.Category.ACADEMIC, rawScores.get(0));
+        scores.put(HabitModel.Category.CREATIVE, rawScores.get(1));
+        scores.put(HabitModel.Category.FITNESS, rawScores.get(2));
+        scores.put(HabitModel.Category.SELF_HELP, rawScores.get(3));
+        scores.put(HabitModel.Category.WORK, rawScores.get(4));
+    }
+
     public URI getTreeUri() {
+        int seed = Integer.valueOf(uuid.replaceAll("[^0-9.]", ""));
         return URI.create(MessageFormat.format("https://us-central1-cs446-habitree.cloudfunctions.net/tree/?red={0}&green={1}&blue={2}&orange={3}&purple={4}&seed={5}",
                 scores.getOrDefault(HabitModel.Category.ACADEMIC, 0f),
                 scores.getOrDefault(HabitModel.Category.CREATIVE, 0f),
                 scores.getOrDefault(HabitModel.Category.FITNESS, 0f),
                 scores.getOrDefault(HabitModel.Category.SELF_HELP, 0f),
                 scores.getOrDefault(HabitModel.Category.WORK, 0f),
-                0 // TODO: Use user ID as seed
+                String.valueOf(seed)
         ));
     }
 
@@ -44,5 +56,13 @@ public class ScoreModel {
             breakdown.put(category, sum == 0 ? 0 : scores.get(category)/sum);
         }
         return breakdown;
+    }
+
+    public float cleanSummaryScoreForLeaderboard() {
+        float sum = 0f;
+        for (HabitModel.Category category : scores.keySet()) {
+            sum += scores.get(category);
+        }
+        return Math.round(sum * 100);
     }
 }

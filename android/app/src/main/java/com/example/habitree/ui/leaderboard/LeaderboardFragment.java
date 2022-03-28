@@ -2,23 +2,19 @@ package com.example.habitree.ui.leaderboard;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,10 +24,10 @@ import com.example.habitree.model.PersonModel;
 import com.example.habitree.ui.follow.FollowFragment;
 
 import com.example.habitree.R;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class LeaderboardFragment extends Fragment {
 
@@ -40,26 +36,19 @@ public class LeaderboardFragment extends Fragment {
 
     private void setUpLeaderboardFriends() {
         //connect to the backend later - for now hardcode
-        String UID = FirebaseAuth.getInstance().getCurrentUser().getUid();
 //        List<PersonModel> followees = firestoreAPI.getFolloweeScores(UID); TODO: Fix getFollower method
         List<PersonModel> followees = new ArrayList<PersonModel>();
-        followees.add(new PersonModel(new ArrayList<Float>(Arrays.asList(0f, 2.0f, 3.1f, 4.1f, 4.1f)), "Roberto"));
-        followees.add(new PersonModel(new ArrayList<Float>(Arrays.asList(1.0f, 2.0f, 3.1f, 4.1f, 4.1f)), "Meimei"));
-        followees.add(new PersonModel(new ArrayList<Float>(Arrays.asList(1.0f, 6.0f, 3.1f, 4.1f, 3.1f)), "Xiaoli"));
-        followees.add(new PersonModel(new ArrayList<Float>(Arrays.asList(1.0f, 2.0f, 3.1f, 4.1f, 0.1f)), "Sam"));
-        followees.add(new PersonModel(new ArrayList<Float>(Arrays.asList(1.0f, 2.0f, 3.1f, 4.1f, 0.1f)), "Sam"));
-        followees.add(new PersonModel(new ArrayList<Float>(Arrays.asList(1.0f, 2.0f, 3.1f, 4.1f, 0.1f)), "Sam"));
-        followees.add(new PersonModel(new ArrayList<Float>(Arrays.asList(1.0f, 2.0f, 3.1f, 4.1f, 0.1f)), "Sam"));
-
-
+        followees.add(new PersonModel(new ArrayList<Float>(Arrays.asList(0f, 2.0f, 3.1f, 4.1f, 4.1f)), "Roberto", UUID.randomUUID().toString()));
+        followees.add(new PersonModel(new ArrayList<Float>(Arrays.asList(1.0f, 2.0f, 3.1f, 4.1f, 4.1f)), "Meimei", UUID.randomUUID().toString()));
+        followees.add(new PersonModel(new ArrayList<Float>(Arrays.asList(1.0f, 6.0f, 3.1f, 4.1f, 3.1f)), "Xiaoli", UUID.randomUUID().toString()));
+        followees.add(new PersonModel(new ArrayList<Float>(Arrays.asList(1.0f, 2.0f, 3.1f, 4.1f, 0.1f)), "Sam", UUID.randomUUID().toString()));
+        followees.add(new PersonModel(new ArrayList<Float>(Arrays.asList(1.0f, 2.0f, 3.1f, 4.1f, 0.1f)), "Sam", UUID.randomUUID().toString()));
+        followees.add(new PersonModel(new ArrayList<Float>(Arrays.asList(1.0f, 2.0f, 3.1f, 4.1f, 0.1f)), "Sam", UUID.randomUUID().toString()));
+        followees.add(new PersonModel(new ArrayList<Float>(Arrays.asList(1.0f, 2.0f, 3.1f, 4.1f, 0.1f)), "Sam", UUID.randomUUID().toString()));
 
         for (PersonModel person: followees) {
-            List<Float> personScores = person.getScores();
-            Float scoreTotal = 0.0f;
-            for (Float score: personScores) {
-                scoreTotal = Float.sum(score,scoreTotal);
-            }
-            leaderboardlist.add(new LeaderboardFriendModel(person.getName(),scoreTotal));
+            Float personScore = person.getScore().cleanSummaryScoreForLeaderboard();
+            leaderboardlist.add(new LeaderboardFriendModel(person.getName(), personScore));
         }
 
         Collections.sort(leaderboardlist);
@@ -94,7 +83,8 @@ public class LeaderboardFragment extends Fragment {
         share.setOnClickListener(v -> {
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
             shareIntent.setType("text/plain");
-            shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_leaderboard));
+            String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_leaderboard) + uid);
             startActivity(Intent.createChooser(shareIntent, "Share your position!"));
         });
 
