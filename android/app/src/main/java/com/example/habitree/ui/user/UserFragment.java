@@ -17,6 +17,7 @@ import com.example.habitree.helpers.DateHelpers;
 import com.example.habitree.model.HabitModel;
 import com.example.habitree.model.ScoreModel;
 import com.example.habitree.model.TreeModel;
+import com.example.habitree.presenter.UserPresenter;
 import com.example.habitree.ui.tree.TreeFragment;
 
 import java.text.DateFormat;
@@ -29,6 +30,7 @@ public class UserFragment extends Fragment {
 
     private Date startOfCurrentWeek, selectedWeek;
     private Button prevBtn, nextBtn;
+    private UserPresenter presenter;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {

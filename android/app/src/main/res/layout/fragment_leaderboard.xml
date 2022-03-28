@@ -27,4 +27,12 @@
         android:text="Follow User"
         tools:layout_editor_absoluteX="247dp"
         tools:layout_editor_absoluteY="652dp" />
+    <Button
+        android:id="@+id/upload_score_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Upload your score!"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>

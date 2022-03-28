@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.habitree.R;
+import com.example.habitree.api.FirestoreAPI;
 import com.example.habitree.api.HabitApi;
 import com.example.habitree.geofence.GeofenceInfo;
 import com.example.habitree.listener.CheckBoxTapped;
@@ -30,16 +31,17 @@ import com.example.habitree.ui.editing.EditHabitFragment;
 import com.example.habitree.view.AbstractView;
 
 import java.util.ArrayList;
-
 import java.util.OptionalInt;
 import java.util.UUID;
 import java.util.stream.IntStream;
 
 public class HomeFragment extends Fragment implements AbstractView<HomePresenter> {
 
+    private static final String TAG = "HomeFragment";
     private HomeModel homeModel;
     private HomePresenter presenter;
     private HabitApi habitApi;
+    private FirestoreAPI firestoreAPI;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -55,6 +57,7 @@ public class HomeFragment extends Fragment implements AbstractView<HomePresenter
         habitApi = new HabitApi(requireContext());
         setPresenter(new HomePresenter(this, habitApi));
 
+        firestoreAPI = new FirestoreAPI(requireContext());
         // Note this issue is that this is getting called when we return to the fragment
         //      and for some reason only the habit that was just updated is present
         homeModel = presenter.onViewCreated();

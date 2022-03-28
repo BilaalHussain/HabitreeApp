@@ -1,5 +1,7 @@
 package com.example.habitree.model;
 
+import com.google.common.collect.ImmutableMap;
+
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.Date;
@@ -44,5 +46,22 @@ public class ScoreModel {
             breakdown.put(category, sum == 0 ? 0 : scores.get(category)/sum);
         }
         return breakdown;
+    }
+
+    public ImmutableMap<HabitModel.Category, Float> getScore(boolean bonus) {
+        // "Curve" score: 10 * sqrt(score as percent)
+        if( ! bonus ) {
+            return ImmutableMap.copyOf(scores);
+        }
+
+        Map<HabitModel.Category, Float> curvedScores = new HashMap<HabitModel.Category, Float>(scores);
+
+        for (HabitModel.Category key : curvedScores.keySet()) {
+            float originalScoreAsPercent = curvedScores.getOrDefault(key, 0f) * 100f;
+
+            float curved = (float) (10f * Math.sqrt(originalScoreAsPercent))/ 100f;
+            curvedScores.put(key, curved);
+        }
+        return ImmutableMap.copyOf(curvedScores);
     }
 }

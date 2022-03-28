@@ -14,13 +14,18 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import com.example.habitree.ui.follow.FollowFragment;
 
 import com.example.habitree.R;
+import com.example.habitree.api.FirestoreAPI;
+import com.example.habitree.api.HabitApi;
+import com.example.habitree.presenter.LeaderboardPresenter;
+import com.example.habitree.ui.follow.FollowFragment;
 
 public class LeaderboardFragment extends Fragment {
 
+    private static final String TAG = "LeaderboardFragment";
     private LeaderboardViewModel leaderboardViewModel;
+    private LeaderboardPresenter leaderboardPresenter;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -29,6 +34,20 @@ public class LeaderboardFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_leaderboard, container, false);
         final TextView textView = root.findViewById(R.id.text_dashboard);
         final Button followUserButton = root.findViewById(R.id.follow_user_button);
+
+        leaderboardPresenter = new LeaderboardPresenter(
+                new FirestoreAPI(requireContext()),
+                new HabitApi(requireContext()),
+                "vXf3QpHOAgZ9lrbffk1J9odFCqH3" // TODO: Code to get login
+                );
+
+        root.findViewById(R.id.upload_score_button).setOnClickListener(
+                view -> {
+
+                    leaderboardPresenter.saveScore(leaderboardPresenter.getScores(),
+                                                    leaderboardPresenter.shouldGiveBonus());
+                }
+        );
 
         leaderboardViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
@@ -46,7 +65,7 @@ public class LeaderboardFragment extends Fragment {
 
     private void replaceFragment(Fragment f) {
         FragmentManager fm = getParentFragmentManager();
-        FragmentTransaction t = fm.beginTransaction().replace(R.id.nav_host_fragment,f);
+        FragmentTransaction t = fm.beginTransaction().replace(R.id.nav_host_fragment, f);
         t.addToBackStack(null);
         t.commit();
     }
