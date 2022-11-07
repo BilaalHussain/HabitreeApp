@@ -1,7 +1,15 @@
 # Habitree
 This project's repository is divided into 3 folders.
 
+
 ## ./android
+The android app code
+## ./functions
+The firebase functions source code.
+
+## ./tree_rendering
+The tree rendering source code.
+
 ### App Functionality 
 Sign in with email/password + Google OAuth
 The app gives users two options for signing in/creating their account. They could enter an email and a password into the input fields on the login screen, then tap the “sign in” button to log in. They could also simply tap the “sign in with google” button, which will prompt them to choose an existing google account on the device. Once they have chosen an account, the app will log them in with that account, and if it’s the user’s first time signing in, their account will also be registered.
@@ -25,9 +33,3 @@ The app allows the users to stay up-to-date with each other’s progress with th
 The ‘Leaderboard’ page shows the name and score of those the user follows sorted by their score. Tapping on their cards on this page will open up their profile page and display their tree and pie chart.
 Widget
 A user is able to add a widget to their home screen that displays their current week’s tree. As the user completes their habits, this tree will grow and be updated on their home screen.
-
-## ./functions
-The firebase functions source code.
-
-## ./tree_rendering
-The tree rendering source code.
